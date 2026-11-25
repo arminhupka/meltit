@@ -1,0 +1,13 @@
+Higgsfield · Image · Nano Banana Pro · Multi-reference
+
+Reference 1 is the hand-drawn sketch. Use it as the layout reference.
+Reference 2 shows a gray plastic cartridge. Use the molded plastic, finger recess, ribs and label frame as material cues. Design an original silhouette and leave out all existing text, logos and marks.
+Reference 3 shows the eight original VHS-inspired labels. Use their color bands and halftone textures as the art direction.
+
+Design one high-fidelity, front-on screen for TAPE MULTI-FX, a desktop audio effects plugin. Landscape 16:10, flat orthographic view, all edges visible, UI fills the frame. Use matte charcoal-green housing, warm ivory control panels, molded graphite knobs and muted amber highlights. Aim for the compact feel of a vintage studio processor and the graphics of blank VHS tape sleeves.
+
+A narrow top bar has our TAPE MULTI-FX wordmark, the preset name “Twin Echo”, and a “Generate” button. Beneath it, a thin signal-flow arrow points from “Input” on the left to “Output” on the right. The main row contains two recessed cartridge slots side by side with a small rightward arrow between them. Both contain a Delay cartridge with its blue-and-orange label showing. The control panels emerge separately beneath their respective slots. Each has the title “Delay” and four knobs labeled “Feedback”, “Saturation”, “Analog”, and “Mix”. The first reads “1/16 Dotted”, “27%”, “3 dB”, “16%”, and “22%”. The second reads “1/4”, “42%”, “3 dB”, “16%”, and “31%”. To the right of the loaded slots, place a large rounded translucent plus button labeled “Add slot”. The knob labels must be readable and the settings for each copy clearly distinct.
+
+The bottom shelf looks like a shallow hardware tray. Show six portrait plastic cartridges with an original stepped corner, recessed finger grip, ribbed shoulders, a distinct narrow label frame, and text beneath each label. The six visible labels read “Tape”, “Tremolo”, “Saturation”, “Resampler”, “Chorus”, and “Delay” in that order. Add left and right carousel arrows so users can access the remaining effects. Make it obvious visually that a cartridge can be picked out of the shelf and inserted into the central slot.
+
+Make the whole interface practical for mouse operation. Show functional copy only. Use VHS-style diagonal stripe blocks and economical typography. Emphasize accurate UI text and the readable relationship between shelf, slots, and their control panels. Omit sidebars, product photography, vignette, gaming trademarks, characters, DAW chrome, and placeholder text.

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CASSETONE szuflada MOD</title>
+<style>
+:root{--cream:#f6ddb4;--vfd:#74f2df}
+body{margin:0;background:#0b0d0f;font-family:Segoe UI,system-ui,sans-serif;padding:24px 16px;color:var(--cream)}
+.dev{width:1100px;margin:0 auto;background:#14171a;border-radius:12px;padding:12px;border:1px solid #23282d}
+.rack{height:150px;border-radius:10px;background:#111417;border:1px solid #262b30;display:flex;gap:10px;padding:12px;align-items:stretch}
+.card{flex:0 0 200px;border-radius:8px;background:#3c5a5f;opacity:.85}
+.card:nth-child(2){background:#c2581c}.card:nth-child(3){background:#2d2b52}
+.stage{position:relative;margin-top:10px}
+.shelf{height:78px;border-radius:10px;background:#1a1e22;border:1px solid #262b30;display:flex;gap:8px;padding:12px}
+.shelf i{flex:1;border-radius:5px;background:#8b8f94;opacity:.5}
+.drawerWrap{position:absolute;left:0;right:0;bottom:0;height:250px;overflow:hidden;pointer-events:none;border-radius:10px 10px 0 0}
+.drawer{position:absolute;left:0;right:0;bottom:0;height:250px;background:#22262b;border:1px solid #3a4046;border-bottom:none;border-radius:10px 10px 0 0;transform:translateY(100%);transition:transform .38s cubic-bezier(.2,1.25,.4,1);pointer-events:auto;box-shadow:0 -10px 24px rgba(0,0,0,.6);padding:10px 14px 14px;box-sizing:border-box}
+.drawer.open{transform:translateY(0)}
+.grip{width:60px;height:4px;border-radius:2px;background:#4a5056;margin:0 auto 8px}
+.tabs{display:flex;gap:4px;margin-bottom:10px}
+.tab{font-size:12px;font-weight:700;letter-spacing:.04em;padding:5px 12px;border-radius:6px 6px 0 0;background:#181b1f;color:#8e9aa3;cursor:pointer;border:1px solid #2c3136;border-bottom:none}
+.tab.on{background:#2c3136;color:var(--cream)}
+.tab span{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px}
+.close{margin-left:auto;font-size:12px;color:#8e9aa3;cursor:pointer;padding:5px 8px}
+.page{display:none}.page.on{display:block}
+.strip{position:relative;z-index:2;margin-top:0;display:flex;gap:8px;align-items:stretch;background:#1d2125;border-radius:8px;padding:7px;border:1px solid #2c3136}
+.key{width:70px;border-radius:6px;background:#2f3338;border:1px solid #000;color:var(--cream);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px}
+.key::before{content:"";width:8px;height:8px;background:var(--cream)}
+.bay{display:flex;gap:4px;background:#0c0e10;border-radius:6px;padding:4px 8px}
+.jack{width:46px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;border-radius:5px}
+.jack.on{background:#1f2a30}
+.jl{font-size:10px;font-weight:600;color:var(--cream);opacity:.7;letter-spacing:.04em}
+.ind{height:9px;display:flex;align-items:center;justify-content:center;gap:1px}
+.sock{width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e6e9ec,#55595e);display:flex;align-items:center;justify-content:center}
+.sock i{width:8px;height:8px;border-radius:50%;background:#050607;display:block}
+.vfd{flex:1;min-width:0;background:#07100f;border-radius:5px;border:1px solid #000;padding:5px 8px;color:var(--vfd);display:flex;flex-direction:column;justify-content:center;text-shadow:0 0 6px rgba(116,242,223,.55)}
+.vt{display:flex;justify-content:space-between;align-items:baseline;gap:4px}
+.cap{font-size:10.5px;letter-spacing:.05em;white-space:nowrap}.cap b{font-weight:700}.cap span{opacity:.55}
+.val{font-family:Consolas,monospace;font-size:17px;white-space:nowrap}
+.lad{display:flex;gap:1px;margin-top:3px}.lad i{flex:1;height:2px;background:var(--vfd);opacity:.15}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:14px;align-items:stretch}
+.pill{font-size:11px;padding:3px 8px;border-radius:4px;background:#0d1b24;color:#cde;border:1px solid #364753}
+.knobs{display:flex;justify-content:space-around;align-items:center}
+.kn{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;font-weight:600}
+.kn div{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#3a3d41,#141517);border:2px solid #3a3d41;position:relative}
+.kn div::after{content:"";position:absolute;left:15px;top:3px;width:2px;height:9px;background:#eee;border-radius:1px}
+.screen{height:150px;background:#07100f;border-radius:6px;overflow:hidden}
+.steps{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));gap:4px;height:150px;background:#0d0c1d;border-radius:6px;padding:8px;position:relative;box-sizing:border-box}
+.st{position:relative}.st i{position:absolute;left:0;right:0;border-radius:2px;background:#3d8fc4}
+.st.on i{background:#bfe9ff;box-shadow:0 0 8px #7fd0ff}
+.mid{position:absolute;left:8px;right:8px;top:50%;height:1px;background:#5a55a6;opacity:.7}
+.side{display:flex;flex-direction:column;gap:10px;justify-content:center}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.note{max-width:1160px;margin:14px auto 0;font-size:13px;color:#aab9c4;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="dev">
+ <div class="rack"><div class="card"></div><div class="card"></div><div class="card"></div></div>
+ <div class="stage">
+  <div class="shelf"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="drawerWrap">
+   <div class="drawer" id="drawer">
+    <div class="grip"></div>
+    <div class="tabs">
+     <div class="tab" data-p="lfo1"><span style="background:#e0473c"></span>LFO 1</div>
+     <div class="tab" data-p="lfo2"><span style="background:#f0b030"></span>LFO 2</div>
+     <div class="tab" data-p="macro"><span style="background:#3c98e6"></span>MACRO</div>
+     <div class="tab" data-p="env"><span style="background:#74f2df"></span>ENV</div>
+     <div class="tab" data-p="seq"><span style="background:#bfe9ff"></span>SEQ</div>
+     <div class="close" id="close">Schowaj ▼</div>
+    </div>
+    <div class="page" id="p-env"><div class="row">
+     <div class="screen"><svg viewBox="0 0 200 150" preserveAspectRatio="none" style="width:100%;height:100%"><polyline id="envline" fill="none" stroke="#74f2df" stroke-width="1.6" points=""/></svg></div>
+     <div class="side"><div class="pills"><span class="pill">Źródło: sidechain</span><span class="pill">Wejście</span></div>
+      <div class="knobs"><span class="kn"><div></div>Attack</span><span class="kn"><div></div>Release</span><span class="kn"><div></div>Gain</span></div></div>
+    </div></div>
+    <div class="page" id="p-seq"><div class="row">
+     <div class="steps" id="steps"><div class="mid"></div></div>
+     <div class="side"><div class="pills"><span class="pill">1/16</span><span class="pill">16 kroków</span><span class="pill">Losuj</span><span class="pill">Wyczyść</span></div>
+      <div class="knobs"><span class="kn"><div></div>Glide</span><span class="kn"><div></div>Swing</span><span class="kn"><div></div>Length</span></div></div>
+    </div></div>
+    <div class="page" id="p-lfo1"><div class="row"><div class="screen"><svg viewBox="0 0 200 150" preserveAspectRatio="none" style="width:100%;height:100%"><polyline id="lfoline" fill="none" stroke="#e0473c" stroke-width="1.6" points=""/></svg></div>
+     <div class="side"><div class="pills"><span class="pill">Sine</span><span class="pill">Sync 1/2</span></div><div class="knobs"><span class="kn"><div></div>Rate</span><span class="kn"><div></div>Phase</span></div></div></div></div>
+    <div class="page" id="p-lfo2"><div class="row"><div class="screen"></div><div class="side"><div class="pills"><span class="pill">Triangle</span><span class="pill">Free</span></div><div class="knobs"><span class="kn"><div></div>Rate</span><span class="kn"><div></div>Phase</span></div></div></div></div>
+    <div class="page" id="p-macro"><div class="row"><div class="screen"></div><div class="side"><div class="knobs"><span class="kn"><div></div>Macro</span></div></div></div></div>
+   </div>
+  </div>
+ </div>
+ <div class="strip">
+  <div class="key">STOP</div>
+  <div class="bay">
+   <div class="jack" data-p="lfo1"><span class="jl">LFO 1</span><span class="ind"><i id="l1" style="width:6px;height:6px;border-radius:50%;background:#e0473c;display:block"></i></span><span class="sock"><i></i></span></div>
+   <div class="jack" data-p="lfo2"><span class="jl">LFO 2</span><span class="ind"><i id="l2" style="width:6px;height:6px;border-radius:50%;background:#f0b030;display:block"></i></span><span class="sock"><i></i></span></div>
+   <div class="jack" data-p="macro"><span class="jl">MACRO</span><span class="ind"><span style="width:28px;height:4px;background:#11161b;border-radius:2px;overflow:hidden;display:block"><i style="display:block;height:4px;width:50%;background:#3c98e6"></i></span></span><span class="sock"><i></i></span></div>
+   <div class="jack" data-p="env"><span class="jl">ENV</span><span class="ind" id="envm"></span><span class="sock"><i></i></span></div>
+   <div class="jack" data-p="seq"><span class="jl">SEQ</span><span class="ind" id="seqm"></span><span class="sock"><i></i></span></div>
+  </div>
+  <div class="vfd"><div class="vt"><span class="cap"><b>IN</b> <span>DB</span></span><span class="val">0.0</span></div><div class="lad" data-c="10"></div></div>
+  <div class="vfd"><div class="vt"><span class="cap"><b>OUT</b> <span>DB</span></span><span class="val">0.0</span></div><div class="lad" data-c="10"></div></div>
+  <div class="vfd"><div class="vt"><span class="cap"><b>WIDTH</b> <span>%</span></span><span class="val">100</span></div><div class="lad" data-l="10"></div></div>
+  <div class="vfd" style="flex:1.35"><div class="vt"><span class="cap"><b>PITCH</b> <span>ST · CT</span></span><span class="val">+2 −15</span></div><div class="lad" data-c="12"></div></div>
+  <div class="vfd"><div class="vt"><span class="cap"><b>GEN</b> <span>X</span></span><span class="val">1.0</span></div><div class="lad" data-l="0"></div></div>
+  <div class="vfd"><div class="vt"><span class="cap"><b>MIX</b> <span>%</span></span><span class="val">100</span></div><div class="lad" data-l="20"></div></div>
+ </div>
+</div>
+<p class="note">Kliknij gniazdo (ENV, SEQ, LFO, MACRO): szuflada wysuwa się z paska Master nad półkę i pokazuje jego panel. Kliknięcie tego samego gniazda albo „Schowaj” chowa ją. Rack zostaje widoczny, więc kable dalej widać.</p>
+<script>
+document.querySelectorAll('.lad').forEach(l=>{for(let i=0;i<20;i++){const c=document.createElement('i');const lit=l.dataset.l!==undefined?i<+l.dataset.l:(i===+l.dataset.c||i===+l.dataset.c-1);if(lit)c.style.opacity=.85;l.appendChild(c)}});
+const drawer=document.getElementById('drawer');let current=null;
+function show(p){if(current===p&&drawer.classList.contains('open')){drawer.classList.remove('open');current=null}else{current=p;drawer.classList.add('open')}
+document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.p===current));
+document.querySelectorAll('.jack').forEach(t=>t.classList.toggle('on',t.dataset.p===current));
+document.querySelectorAll('.page').forEach(pg=>pg.classList.toggle('on',pg.id==='p-'+current));}
+document.querySelectorAll('.jack,.tab').forEach(e=>e.addEventListener('click',()=>{if(e.classList.contains('tab')&&current===e.dataset.p)return;show(e.dataset.p)}));
+document.getElementById('close').addEventListener('click',()=>show(current));
+const envm=document.getElementById('envm');const eb=[];for(let i=0;i<6;i++){const b=document.createElement('i');b.style.cssText='width:3px;height:8px;background:#74f2df;opacity:.15;display:block';envm.appendChild(b);eb.push(b)}
+const seqm=document.getElementById('seqm');const sd=[];for(let i=0;i<8;i++){const d=document.createElement('i');d.style.cssText='width:3px;height:3px;border-radius:50%;background:#bfe9ff;opacity:.2;display:block';seqm.appendChild(d);sd.push(d)}
+const vals=[.6,-.2,.9,.1,-.7,.4,.8,-.5,.3,-.9,.6,0,.7,-.3,.95,-.6];const steps=document.getElementById('steps');const sc=[];
+vals.forEach(v=>{const s=document.createElement('div');s.className='st';const b=document.createElement('i');b.style.height=Math.max(2,Math.abs(v)*50)+'%';if(v>=0)b.style.bottom='50%';else b.style.top='50%';s.appendChild(b);steps.appendChild(s);sc.push(s)});
+const hist=[];let t=0,step=0,tick=0;
+setInterval(()=>{t+=.05;tick++;
+document.getElementById('l1').style.opacity=(.25+.75*(.5+.5*Math.sin(t*4))).toFixed(2);
+document.getElementById('l2').style.opacity=(.25+.75*(.5+.5*Math.sin(t*1.7))).toFixed(2);
+const beat=(t*2)%1;const env=Math.max(0,1-beat*2.2)+.08*Math.random();
+eb.forEach((b,i)=>b.style.opacity=i<Math.round(env*6)?.9:.15);
+hist.push(env);if(hist.length>80)hist.shift();
+document.getElementById('envline').setAttribute('points',hist.map((v,i)=>(i*200/79).toFixed(1)+','+(140-v*125).toFixed(1)).join(' '));
+document.getElementById('lfoline').setAttribute('points',Array.from({length:81},(_,i)=>(i*2.5).toFixed(1)+','+(75-55*Math.sin(i/80*6.283*2+t*4)).toFixed(1)).join(' '));
+if(tick%3===0){step=(step+1)%16;sc.forEach((s,i)=>s.classList.toggle('on',i===step));sd.forEach((d,i)=>d.style.opacity=i===step%8?.95:.2)}
+},50);
+setTimeout(()=>show('seq'),700);
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+Tape Multi-FX – grafiki interfejsu
+
+Oryginały ImageGen: 14. Każda unikalna grafika występuje raz.
+
+Assety używane we wtyczce
+- ButtonFaces.png
+- CartridgeHardware.png
+- CartridgeLabels.png
+- ControlSprites.png
+- DockingContacts.png
+- PanelFaces.png
+- RackFrames.png
+- TapeMultiFxMark.png
+
+Wcześniejsze grafiki i makiety
+- CartridgeLabels-Original-Illustrations.png
+- Tape-Multi-FX-Design-Echo-Silver.png
+- Tape-Multi-FX-Design-Echo.png
+- Tape-Multi-FX-Design-Patchbay.png
+- Tape-Multi-FX-Cartridge-VHS-Visual.png
+- Tape-Multi-FX-Cartridge-VHS-Preset-Arrows.png
+
+Podglądy interfejsu
+- Tape-Multi-FX-0.7.0-Preview.png
+- Tape-Multi-FX-0.8.0-Preview.png
+- Tape-Multi-FX-0.8.1-Chorus.png
+- Tape-Multi-FX-0.8.1-Preview.png
+- Tape-Multi-FX-0.8.2-Chorus.png
+- Tape-Multi-FX-0.8.2-Preview.png
+- Tape-Multi-FX-0.8.2-Wide.png
+- Tape-Multi-FX-0.8.3-Preview.png
+- Tape-Multi-FX-0.8.4-Chorus.png
+- Tape-Multi-FX-0.8.4-Preview.png
+- Tape-Multi-FX-0.8.4-Wide.png
+- Tape-Multi-FX-Cartridge-Preview.png
+- Native-Capture-editor-060.png
+- Native-Capture-editor-062.png
+- Native-Capture-editor-071.png
+- Cartridge-Prototype-Early-Preview.png
+
+Zapisane prompty
+- Tape-Multi-FX-Cartridge-Labels-VHS-prompt.txt
+- Tape-Multi-FX-Design-Echo-prompt.txt
+- Tape-Multi-FX-Design-Echo-Silver-prompt.txt
+- Tape-Multi-FX-Design-Patchbay-prompt.txt
+- Prompt-Higgsfield-Tape-Multi-FX.txt
+- ImageGen-0.8.2.txt
+
+Interaktywny prototyp
+- Tape-Multi-FX-Cartridge-Prototype.html
+
+CartridgeLabels.png to atlas VHS używany we wtyczce.
+CartridgeLabels-Original-Illustrations.png to pierwszy wariant etykiet.

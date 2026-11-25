@@ -1,0 +1,10 @@
+/build/
+/Archive/
+/Resources/Releases/
+/.vs/
+/CMakeUserPresets.json
+__pycache__/
+*.pyc
+/dist/
+/a
+/d
