@@ -1,0 +1,888 @@
+{
+  "summary": {
+    "files": 40,
+    "converted": 40,
+    "failed": 0,
+    "level_checks": 0,
+    "notes": {
+      "Master compressor has no counterpart.": 40,
+      "Synced grain times were fixed at 120 BPM.": 40,
+      "Envelope 1 was sampled into the step sequencer.": 35,
+      "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.": 30,
+      "Reverb decay was estimated from Portal's size.": 18,
+      "Skipped 1 modulation route(s): GranulatorNode Pan.": 9,
+      "Skipped 1 modulation route(s): modulation of another modulation's depth.": 8,
+      "Skipped 1 modulation route(s): GranulatorNode FeedbackLowpassCutoff.": 8,
+      "Skipped 1 modulation route(s): GranulatorNode Density.": 7,
+      "Filter slot was taken as a low-pass on the Grain card's tone filter; resonance and drive dropped.": 7,
+      "Skipped 1 modulation route(s): GranulatorNode StretchRetriggerRate.": 6,
+      "Skipped 1 modulation route(s): StereoDelay LowPass.": 6,
+      "Phaser slot has no counterpart.": 5,
+      "Bit Reducer bit depth and mix have no counterpart; only the sample rate was kept.": 5,
+      "Skipped 1 modulation route(s): Filter Drive.": 4,
+      "Chorus feedback has no counterpart.": 4,
+      "Skipped 1 modulation route(s): Chorus Feedback.": 4,
+      "Skipped 1 modulation route(s): StereoDelay HighPass.": 4,
+      "Skipped 1 modulation route(s): Phaser Stages.": 4,
+      "Grain pan offset has no counterpart; grains stay centred.": 3,
+      "Skipped 1 modulation route(s): Filter Resonance.": 3,
+      "Skipped 1 modulation route(s): ClickableEnvelope Humanize.": 3,
+      "Skipped 1 modulation route(s): Reverb Width.": 3,
+      "Skipped 1 modulation route(s): BitReducer WetDry.": 3,
+      "Skipped 1 modulation route(s): Phaser Feedback.": 2,
+      "Skipped 1 modulation route(s): Phaser Rate.": 2,
+      "Skipped 1 modulation route(s): StereoDelay Time.": 2,
+      "Skipped 1 modulation route(s): GranulatorNode FeedbackHighpassCutoff.": 2,
+      "Skipped 1 modulation route(s): Chorus Width.": 2,
+      "Distortion was approximated by the Saturation card.": 2,
+      "Skipped 1 modulation route(s): Compressor OutputGain.": 2,
+      "Skipped 1 modulation route(s): routes past four on seq.": 2,
+      "Skipped 1 modulation route(s): BitReducer SampleReduction.": 2,
+      "Skipped 1 modulation route(s): ClickableEnvelope Rate.": 2,
+      "Skipped 1 modulation route(s): routes past four on lfo_1.": 2,
+      "Skipped 2 modulation route(s): modulation of another modulation's depth.": 1,
+      "Skipped 1 modulation route(s): Chorus InputGain.": 1,
+      "Skipped 1 modulation route(s): Reverb InputGain.": 1,
+      "Skipped 1 modulation route(s): Reverb OutputGain.": 1,
+      "Grain size 2000 ms was limited to 10-1000 ms.": 1,
+      "Skipped 2 modulation route(s): ClickableEnvelope Humanize.": 1,
+      "Skipped 1 modulation route(s): Compressor InputGain.": 1,
+      "Grain Tone LPF modulation was limited to the deepest route.": 1,
+      "Skipped 1 modulation route(s): Filter WetDry.": 1,
+      "Skipped 1 modulation route(s): Chorus OutputGain.": 1,
+      "Skipped 1 modulation route(s): Filter FollowAmount.": 1,
+      "Skipped 1 modulation route(s): Filter OutputGain.": 1,
+      "Skipped 2 modulation route(s): routes past four on seq.": 1,
+      "Skipped 3 modulation route(s): routes past four on lfo_1.": 1,
+      "Skipped 1 modulation route(s): Reverb Damping.": 1,
+      "Skipped 3 modulation route(s): modulation of another modulation's depth.": 1,
+      "Skipped 1 modulation route(s): Phaser CenterFrequency.": 1,
+      "Grain Stretch Speed modulation was limited to the deepest route.": 1,
+      "Skipped 2 modulation route(s): GranulatorNode StretchRetriggerRate.": 1,
+      "Skipped 2 modulation route(s): StereoDelay OutputGain.": 1,
+      "Skipped 2 modulation route(s): Chorus Width.": 1,
+      "Skipped 2 modulation route(s): routes past four on lfo_1.": 1,
+      "Skipped 1 modulation route(s): GranulatorNode DelayTime.": 1,
+      "Grain Mix modulation was limited to the deepest route.": 1,
+      "Skipped 1 modulation route(s): Phaser ModulationRange.": 1,
+      "Skipped 1 modulation route(s): BitReducer Bits.": 1,
+      "Skipped 2 modulation route(s): GranulatorNode Pan.": 1,
+      "Skipped 1 modulation route(s): Compressor MakeupGain.": 1
+    }
+  },
+  "presets": [
+    {
+      "source": "BLUEBLOODSTREAM.xml",
+      "output": "Bluebloodstream.vstpreset",
+      "cards": [
+        "grain",
+        "delay"
+      ],
+      "peak_db": -15.5,
+      "rms_db": -30.0,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Phaser slot has no counterpart.",
+        "Skipped 1 modulation route(s): GranulatorNode Density.",
+        "Skipped 1 modulation route(s): Phaser Feedback.",
+        "Skipped 1 modulation route(s): Phaser Rate.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "CELLTRANSFER.xml",
+      "output": "Celltransfer.vstpreset",
+      "cards": [
+        "grain",
+        "reverb",
+        "delay"
+      ],
+      "peak_db": -24.7,
+      "rms_db": -37.2,
+      "notes": [
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Reverb decay was estimated from Portal's size.",
+        "Skipped 1 modulation route(s): modulation of another modulation's depth.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "COLDDARKMATTER.xml",
+      "output": "Colddarkmatter.vstpreset",
+      "cards": [
+        "grain",
+        "delay"
+      ],
+      "peak_db": -20.0,
+      "rms_db": -30.8,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Filter slot was taken as a low-pass on the Grain card's tone filter; resonance and drive dropped.",
+        "Master compressor has no counterpart.",
+        "Skipped 1 modulation route(s): Filter Drive.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "CUBESTATIC.xml",
+      "output": "Cubestatic.vstpreset",
+      "cards": [
+        "grain",
+        "reverb"
+      ],
+      "peak_db": -13.2,
+      "rms_db": -25.8,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Master compressor has no counterpart.",
+        "Reverb decay was estimated from Portal's size.",
+        "Skipped 2 modulation route(s): modulation of another modulation's depth.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "DARKDAYS.xml",
+      "output": "Darkdays.vstpreset",
+      "cards": [
+        "grain",
+        "reverb",
+        "chorus"
+      ],
+      "peak_db": -36.8,
+      "rms_db": -50.5,
+      "notes": [
+        "Chorus feedback has no counterpart.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Reverb decay was estimated from Portal's size.",
+        "Skipped 1 modulation route(s): Chorus Feedback.",
+        "Skipped 1 modulation route(s): Chorus InputGain.",
+        "Skipped 1 modulation route(s): Reverb InputGain.",
+        "Skipped 1 modulation route(s): Reverb OutputGain.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "DIARYOFTHEPAST.xml",
+      "output": "Diaryofthepast.vstpreset",
+      "cards": [
+        "grain",
+        "delay",
+        "chorus"
+      ],
+      "peak_db": -34.8,
+      "rms_db": -52.4,
+      "notes": [
+        "Chorus feedback has no counterpart.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Grain size 2000 ms was limited to 10-1000 ms.",
+        "Master compressor has no counterpart.",
+        "Skipped 2 modulation route(s): ClickableEnvelope Humanize.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "DIGITALBRAIN.xml",
+      "output": "Digitalbrain.vstpreset",
+      "cards": [
+        "grain",
+        "reverb",
+        "chorus"
+      ],
+      "peak_db": -19.8,
+      "rms_db": -33.1,
+      "notes": [
+        "Chorus feedback has no counterpart.",
+        "Envelope 1 was sampled into the step sequencer.",
+        "Master compressor has no counterpart.",
+        "Reverb decay was estimated from Portal's size.",
+        "Skipped 1 modulation route(s): GranulatorNode FeedbackLowpassCutoff.",
+        "Skipped 1 modulation route(s): GranulatorNode Pan.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "DISCONNECT.xml",
+      "output": "Disconnect.vstpreset",
+      "cards": [
+        "grain",
+        "reverb"
+      ],
+      "peak_db": -12.1,
+      "rms_db": -24.9,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Filter slot was taken as a low-pass on the Grain card's tone filter; resonance and drive dropped.",
+        "Grain pan offset has no counterpart; grains stay centred.",
+        "Master compressor has no counterpart.",
+        "Reverb decay was estimated from Portal's size.",
+        "Skipped 1 modulation route(s): Filter Resonance.",
+        "Skipped 1 modulation route(s): GranulatorNode Pan.",
+        "Skipped 1 modulation route(s): GranulatorNode StretchRetriggerRate.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "FARBESIDESTHELINE.xml",
+      "output": "Farbesidestheline.vstpreset",
+      "cards": [
+        "grain",
+        "reverb",
+        "delay"
+      ],
+      "peak_db": -15.1,
+      "rms_db": -33.7,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Reverb decay was estimated from Portal's size.",
+        "Skipped 1 modulation route(s): GranulatorNode Pan.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "FREEZIN.xml",
+      "output": "Freezin.vstpreset",
+      "cards": [
+        "grain",
+        "reverb"
+      ],
+      "peak_db": -23.3,
+      "rms_db": -40.7,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Filter slot was taken as a low-pass on the Grain card's tone filter; resonance and drive dropped.",
+        "Master compressor has no counterpart.",
+        "Reverb decay was estimated from Portal's size.",
+        "Skipped 1 modulation route(s): ClickableEnvelope Humanize.",
+        "Skipped 1 modulation route(s): Filter Resonance.",
+        "Skipped 1 modulation route(s): Reverb Width.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "GRAINCRYSTALS.xml",
+      "output": "Graincrystals.vstpreset",
+      "cards": [
+        "grain",
+        "delay"
+      ],
+      "peak_db": -16.9,
+      "rms_db": -29.5,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Filter slot was taken as a low-pass on the Grain card's tone filter; resonance and drive dropped.",
+        "Master compressor has no counterpart.",
+        "Skipped 1 modulation route(s): Filter Drive.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "GRAINTEXTURE.xml",
+      "output": "Graintexture.vstpreset",
+      "cards": [
+        "grain",
+        "delay",
+        "delay 2"
+      ],
+      "peak_db": -19.7,
+      "rms_db": -29.7,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Master compressor has no counterpart.",
+        "Skipped 1 modulation route(s): Compressor InputGain.",
+        "Skipped 1 modulation route(s): StereoDelay LowPass.",
+        "Skipped 1 modulation route(s): modulation of another modulation's depth.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "GRANULARSTRETCH.xml",
+      "output": "Granularstretch.vstpreset",
+      "cards": [
+        "grain",
+        "chorus"
+      ],
+      "peak_db": -12.1,
+      "rms_db": -28.6,
+      "notes": [
+        "Chorus feedback has no counterpart.",
+        "Envelope 1 was sampled into the step sequencer.",
+        "Filter slot was taken as a low-pass on the Grain card's tone filter; resonance and drive dropped.",
+        "Master compressor has no counterpart.",
+        "Skipped 1 modulation route(s): GranulatorNode FeedbackLowpassCutoff.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "GRAVITYFALLS.xml",
+      "output": "Gravityfalls.vstpreset",
+      "cards": [
+        "grain",
+        "delay",
+        "reverb"
+      ],
+      "peak_db": -18.7,
+      "rms_db": -33.7,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Reverb decay was estimated from Portal's size.",
+        "Skipped 1 modulation route(s): GranulatorNode FeedbackLowpassCutoff.",
+        "Skipped 1 modulation route(s): Reverb Width.",
+        "Skipped 1 modulation route(s): StereoDelay HighPass.",
+        "Skipped 1 modulation route(s): StereoDelay LowPass.",
+        "Skipped 1 modulation route(s): StereoDelay Time.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "GUNVIOLENCE.xml",
+      "output": "Gunviolence.vstpreset",
+      "cards": [
+        "grain",
+        "delay"
+      ],
+      "peak_db": -15.0,
+      "rms_db": -29.9,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Grain Tone LPF modulation was limited to the deepest route.",
+        "Master compressor has no counterpart.",
+        "Skipped 1 modulation route(s): Filter WetDry.",
+        "Skipped 1 modulation route(s): GranulatorNode Pan.",
+        "Skipped 1 modulation route(s): StereoDelay HighPass.",
+        "Skipped 1 modulation route(s): StereoDelay LowPass.",
+        "Skipped 1 modulation route(s): modulation of another modulation's depth.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "INREVERSE.xml",
+      "output": "Inreverse.vstpreset",
+      "cards": [
+        "grain",
+        "delay"
+      ],
+      "peak_db": -17.8,
+      "rms_db": -29.2,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Skipped 1 modulation route(s): Filter Drive.",
+        "Skipped 1 modulation route(s): GranulatorNode Density.",
+        "Skipped 1 modulation route(s): GranulatorNode FeedbackHighpassCutoff.",
+        "Skipped 1 modulation route(s): GranulatorNode FeedbackLowpassCutoff.",
+        "Skipped 1 modulation route(s): GranulatorNode Pan.",
+        "Skipped 1 modulation route(s): GranulatorNode StretchRetriggerRate.",
+        "Skipped 1 modulation route(s): StereoDelay LowPass.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "LIGHTDISTANCE.xml",
+      "output": "Lightdistance.vstpreset",
+      "cards": [
+        "grain",
+        "chorus"
+      ],
+      "peak_db": -18.2,
+      "rms_db": -31.2,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Filter slot was taken as a low-pass on the Grain card's tone filter; resonance and drive dropped.",
+        "Master compressor has no counterpart.",
+        "Skipped 1 modulation route(s): Chorus Feedback.",
+        "Skipped 1 modulation route(s): Chorus OutputGain.",
+        "Skipped 1 modulation route(s): Chorus Width.",
+        "Skipped 1 modulation route(s): ClickableEnvelope Humanize.",
+        "Skipped 1 modulation route(s): Filter Drive.",
+        "Skipped 1 modulation route(s): Filter FollowAmount.",
+        "Skipped 1 modulation route(s): Filter OutputGain.",
+        "Skipped 1 modulation route(s): Filter Resonance.",
+        "Skipped 1 modulation route(s): GranulatorNode StretchRetriggerRate.",
+        "Skipped 2 modulation route(s): routes past four on seq.",
+        "Skipped 3 modulation route(s): routes past four on lfo_1.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "MAGNETICUNION.xml",
+      "output": "Magneticunion.vstpreset",
+      "cards": [
+        "grain",
+        "delay",
+        "reverb"
+      ],
+      "peak_db": -13.8,
+      "rms_db": -26.5,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Reverb decay was estimated from Portal's size.",
+        "Skipped 1 modulation route(s): Reverb Damping.",
+        "Skipped 1 modulation route(s): Reverb Width.",
+        "Skipped 1 modulation route(s): StereoDelay LowPass.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "MARBLEMACHINE.xml",
+      "output": "Marblemachine.vstpreset",
+      "cards": [
+        "grain",
+        "delay",
+        "chorus"
+      ],
+      "peak_db": -15.7,
+      "rms_db": -29.8,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Skipped 1 modulation route(s): Chorus Feedback.",
+        "Skipped 3 modulation route(s): modulation of another modulation's depth.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "MARBLETEXTURE.xml",
+      "output": "Marbletexture.vstpreset",
+      "cards": [
+        "grain",
+        "delay",
+        "reverb"
+      ],
+      "peak_db": -13.2,
+      "rms_db": -26.0,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Master compressor has no counterpart.",
+        "Reverb decay was estimated from Portal's size.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "MEGASOMA.xml",
+      "output": "Megasoma.vstpreset",
+      "cards": [
+        "grain",
+        "reverb",
+        "delay"
+      ],
+      "peak_db": -54.6,
+      "rms_db": -67.6,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Reverb decay was estimated from Portal's size.",
+        "Skipped 1 modulation route(s): GranulatorNode Density.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "MERCURYSUN.xml",
+      "output": "Mercurysun.vstpreset",
+      "cards": [
+        "grain",
+        "delay",
+        "saturation"
+      ],
+      "peak_db": -14.9,
+      "rms_db": -27.4,
+      "notes": [
+        "Distortion was approximated by the Saturation card.",
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Skipped 1 modulation route(s): Compressor OutputGain.",
+        "Skipped 1 modulation route(s): GranulatorNode Density.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "MICROGLITCHES.xml",
+      "output": "Microglitches.vstpreset",
+      "cards": [
+        "grain",
+        "chorus"
+      ],
+      "peak_db": -14.0,
+      "rms_db": -29.4,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Master compressor has no counterpart.",
+        "Phaser slot has no counterpart.",
+        "Skipped 1 modulation route(s): Chorus Width.",
+        "Skipped 1 modulation route(s): GranulatorNode Density.",
+        "Skipped 1 modulation route(s): GranulatorNode FeedbackLowpassCutoff.",
+        "Skipped 1 modulation route(s): Phaser CenterFrequency.",
+        "Skipped 1 modulation route(s): Phaser Stages.",
+        "Skipped 1 modulation route(s): routes past four on seq.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "MODULEEMERGENCY.xml",
+      "output": "Moduleemergency.vstpreset",
+      "cards": [
+        "grain",
+        "reverb",
+        "delay"
+      ],
+      "peak_db": -17.8,
+      "rms_db": -32.7,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Master compressor has no counterpart.",
+        "Reverb decay was estimated from Portal's size.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "PEDALCONTROL.xml",
+      "output": "Pedalcontrol.vstpreset",
+      "cards": [
+        "grain",
+        "delay"
+      ],
+      "peak_db": -15.2,
+      "rms_db": -26.8,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Grain Stretch Speed modulation was limited to the deepest route.",
+        "Master compressor has no counterpart.",
+        "Phaser slot has no counterpart.",
+        "Skipped 1 modulation route(s): GranulatorNode FeedbackLowpassCutoff.",
+        "Skipped 1 modulation route(s): Phaser Feedback.",
+        "Skipped 1 modulation route(s): Phaser Rate.",
+        "Skipped 1 modulation route(s): Phaser Stages.",
+        "Skipped 2 modulation route(s): GranulatorNode StretchRetriggerRate.",
+        "Skipped 2 modulation route(s): StereoDelay OutputGain.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "PSYCHENIZER.xml",
+      "output": "Psychenizer.vstpreset",
+      "cards": [
+        "grain",
+        "reverb",
+        "delay"
+      ],
+      "peak_db": -23.0,
+      "rms_db": -35.8,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Grain pan offset has no counterpart; grains stay centred.",
+        "Master compressor has no counterpart.",
+        "Reverb decay was estimated from Portal's size.",
+        "Skipped 1 modulation route(s): ClickableEnvelope Humanize.",
+        "Skipped 1 modulation route(s): GranulatorNode Pan.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "RAMPINGCONTROL.xml",
+      "output": "Rampingcontrol.vstpreset",
+      "cards": [
+        "grain",
+        "delay"
+      ],
+      "peak_db": -19.7,
+      "rms_db": -34.7,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Filter slot was taken as a low-pass on the Grain card's tone filter; resonance and drive dropped.",
+        "Master compressor has no counterpart.",
+        "Skipped 1 modulation route(s): StereoDelay HighPass.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "RATTLESNAKE.xml",
+      "output": "Rattlesnake.vstpreset",
+      "cards": [
+        "grain",
+        "reverb",
+        "delay"
+      ],
+      "peak_db": -23.2,
+      "rms_db": -38.5,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Reverb decay was estimated from Portal's size.",
+        "Skipped 1 modulation route(s): GranulatorNode Density.",
+        "Skipped 1 modulation route(s): GranulatorNode FeedbackLowpassCutoff.",
+        "Skipped 1 modulation route(s): StereoDelay LowPass.",
+        "Skipped 1 modulation route(s): modulation of another modulation's depth.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "REWINDTAPE.xml",
+      "output": "Rewindtape.vstpreset",
+      "cards": [
+        "grain",
+        "saturation",
+        "resampler"
+      ],
+      "peak_db": -15.9,
+      "rms_db": -27.7,
+      "notes": [
+        "Bit Reducer bit depth and mix have no counterpart; only the sample rate was kept.",
+        "Distortion was approximated by the Saturation card.",
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Skipped 1 modulation route(s): BitReducer WetDry.",
+        "Skipped 1 modulation route(s): GranulatorNode Pan.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "SCIENTRONID.xml",
+      "output": "Scientronid.vstpreset",
+      "cards": [
+        "grain",
+        "chorus",
+        "reverb"
+      ],
+      "peak_db": -33.2,
+      "rms_db": -46.2,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Reverb decay was estimated from Portal's size.",
+        "Skipped 1 modulation route(s): Chorus Feedback.",
+        "Skipped 1 modulation route(s): Compressor OutputGain.",
+        "Skipped 1 modulation route(s): routes past four on seq.",
+        "Skipped 2 modulation route(s): Chorus Width.",
+        "Skipped 2 modulation route(s): routes past four on lfo_1.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "SELFDESTRUCTION.xml",
+      "output": "Selfdestruction.vstpreset",
+      "cards": [
+        "grain",
+        "delay",
+        "reverb"
+      ],
+      "peak_db": -22.9,
+      "rms_db": -35.2,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Reverb decay was estimated from Portal's size.",
+        "Skipped 1 modulation route(s): StereoDelay HighPass.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "STOPWAITING.xml",
+      "output": "Stopwaiting.vstpreset",
+      "cards": [
+        "grain",
+        "resampler"
+      ],
+      "peak_db": -17.2,
+      "rms_db": -27.6,
+      "notes": [
+        "Bit Reducer bit depth and mix have no counterpart; only the sample rate was kept.",
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Skipped 1 modulation route(s): BitReducer SampleReduction.",
+        "Skipped 1 modulation route(s): GranulatorNode DelayTime.",
+        "Skipped 1 modulation route(s): GranulatorNode Density.",
+        "Skipped 1 modulation route(s): GranulatorNode StretchRetriggerRate.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "STRETCHEDOUTGRAINS.xml",
+      "output": "Stretchedoutgrains.vstpreset",
+      "cards": [
+        "grain",
+        "delay",
+        "delay 2"
+      ],
+      "peak_db": -16.9,
+      "rms_db": -30.9,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Grain Mix modulation was limited to the deepest route.",
+        "Master compressor has no counterpart.",
+        "Skipped 1 modulation route(s): ClickableEnvelope Rate.",
+        "Skipped 1 modulation route(s): modulation of another modulation's depth.",
+        "Skipped 1 modulation route(s): routes past four on lfo_1.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "STUCKINTHEMATRIX.xml",
+      "output": "Stuckinthematrix.vstpreset",
+      "cards": [
+        "grain",
+        "delay"
+      ],
+      "peak_db": -14.9,
+      "rms_db": -27.1,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Phaser slot has no counterpart.",
+        "Skipped 1 modulation route(s): Phaser Stages.",
+        "Skipped 1 modulation route(s): modulation of another modulation's depth.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "THEARTOFSTUTTER.xml",
+      "output": "Theartofstutter.vstpreset",
+      "cards": [
+        "grain",
+        "delay",
+        "reverb"
+      ],
+      "peak_db": -16.4,
+      "rms_db": -29.4,
+      "notes": [
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Reverb decay was estimated from Portal's size.",
+        "Skipped 1 modulation route(s): GranulatorNode StretchRetriggerRate.",
+        "Skipped 1 modulation route(s): modulation of another modulation's depth.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "TRANSITIONTEXTURE.xml",
+      "output": "Transitiontexture.vstpreset",
+      "cards": [
+        "grain",
+        "resampler"
+      ],
+      "peak_db": -14.6,
+      "rms_db": -28.7,
+      "notes": [
+        "Bit Reducer bit depth and mix have no counterpart; only the sample rate was kept.",
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Phaser slot has no counterpart.",
+        "Skipped 1 modulation route(s): BitReducer WetDry.",
+        "Skipped 1 modulation route(s): Phaser ModulationRange.",
+        "Skipped 1 modulation route(s): Phaser Stages.",
+        "Skipped 1 modulation route(s): routes past four on lfo_1.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "TWINSHAPE.xml",
+      "output": "Twinshape.vstpreset",
+      "cards": [
+        "grain",
+        "delay",
+        "resampler"
+      ],
+      "peak_db": -21.4,
+      "rms_db": -34.2,
+      "notes": [
+        "Bit Reducer bit depth and mix have no counterpart; only the sample rate was kept.",
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Grain pan offset has no counterpart; grains stay centred.",
+        "Master compressor has no counterpart.",
+        "Skipped 1 modulation route(s): BitReducer Bits.",
+        "Skipped 1 modulation route(s): BitReducer WetDry.",
+        "Skipped 1 modulation route(s): GranulatorNode Pan.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "UNKNOWNWORLDS.xml",
+      "output": "Unknownworlds.vstpreset",
+      "cards": [
+        "grain",
+        "delay",
+        "delay 2"
+      ],
+      "peak_db": -21.2,
+      "rms_db": -38.1,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Skipped 1 modulation route(s): ClickableEnvelope Rate.",
+        "Skipped 1 modulation route(s): GranulatorNode FeedbackHighpassCutoff.",
+        "Skipped 1 modulation route(s): GranulatorNode FeedbackLowpassCutoff.",
+        "Skipped 1 modulation route(s): StereoDelay Time.",
+        "Skipped 1 modulation route(s): modulation of another modulation's depth.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "UNVISUALTECHNOLOGY.xml",
+      "output": "Unvisualtechnology.vstpreset",
+      "cards": [
+        "grain",
+        "delay",
+        "reverb"
+      ],
+      "peak_db": -26.9,
+      "rms_db": -38.7,
+      "notes": [
+        "Envelope 1 was sampled into the step sequencer.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Reverb decay was estimated from Portal's size.",
+        "Skipped 1 modulation route(s): GranulatorNode StretchRetriggerRate.",
+        "Skipped 2 modulation route(s): GranulatorNode Pan.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    },
+    {
+      "source": "VERTICALGRID.xml",
+      "output": "Verticalgrid.vstpreset",
+      "cards": [
+        "grain",
+        "delay",
+        "resampler"
+      ],
+      "peak_db": -21.1,
+      "rms_db": -31.6,
+      "notes": [
+        "Bit Reducer bit depth and mix have no counterpart; only the sample rate was kept.",
+        "Envelope 2 became a smooth random LFO at the same rate; its drawn shape was lost.",
+        "Master compressor has no counterpart.",
+        "Skipped 1 modulation route(s): BitReducer SampleReduction.",
+        "Skipped 1 modulation route(s): Compressor MakeupGain.",
+        "Skipped 1 modulation route(s): GranulatorNode Pan.",
+        "Synced grain times were fixed at 120 BPM."
+      ]
+    }
+  ]
+}
