@@ -16,12 +16,27 @@ juce_add_plugin(TapeMultiFx
     COPY_PLUGIN_AFTER_BUILD FALSE)
 
 set_target_properties(TapeMultiFx_Standalone PROPERTIES OUTPUT_NAME "MELTIT")
+if(APPLE)
+    # JUCE writes CFBundleExecutable from the shared PRODUCT_NAME ("Tape Multi-FX"); it must match
+    # the renamed executable or macOS reports the .app as "damaged or incomplete".
+    add_custom_command(TARGET TapeMultiFx_Standalone POST_BUILD
+        COMMAND /usr/libexec/PlistBuddy -c "Set :CFBundleExecutable MELTIT"
+            "$<TARGET_BUNDLE_CONTENT_DIR:TapeMultiFx_Standalone>/Info.plist"
+        VERBATIM)
+endif()
 set(meltit_font_licenses
     "${CMAKE_CURRENT_SOURCE_DIR}/Assets/Fonts/Fontshare-FFL.txt"
     "${CMAKE_CURRENT_SOURCE_DIR}/Assets/Fonts/AzeretMono-OFL.txt")
+if(APPLE)
+    # Bundle layout: only executables belong in Contents/MacOS.
+    set(meltit_standalone_license_dir "$<TARGET_FILE_DIR:TapeMultiFx_Standalone>/../Resources")
+else()
+    set(meltit_standalone_license_dir "$<TARGET_FILE_DIR:TapeMultiFx_Standalone>")
+endif()
 add_custom_command(TARGET TapeMultiFx_Standalone POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${meltit_standalone_license_dir}"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${meltit_font_licenses} "$<TARGET_FILE_DIR:TapeMultiFx_Standalone>"
+        ${meltit_font_licenses} "${meltit_standalone_license_dir}"
     VERBATIM)
 add_custom_command(TARGET TapeMultiFx_VST3 POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:TapeMultiFx_VST3>/../Resources"
