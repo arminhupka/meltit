@@ -5,8 +5,8 @@ set(JUCE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/JUCE" CACHE PATH "Lo
 add_subdirectory("${JUCE_SOURCE_DIR}" juce)
 
 juce_add_plugin(TapeMultiFx
-    COMPANY_NAME "Tape Prototype"
-    BUNDLE_ID "org.tapeprototype.multifx"
+    COMPANY_NAME "Producersources"
+    BUNDLE_ID "com.producersources.meltit"
     PRODUCT_NAME "Tape Multi-FX"
     PLUGIN_MANUFACTURER_CODE Tprj
     PLUGIN_CODE Tpm2

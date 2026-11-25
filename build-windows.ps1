@@ -45,6 +45,8 @@ New-Item -ItemType Directory -Path "$out/Standalone", "$out/VST3" -Force | Out-N
 Copy-Item $exe "$out/Standalone/"
 Copy-Item $vst3 "$out/VST3/" -Recurse
 Copy-Item (Join-Path $root 'Assets/Fonts/*.txt') $out -ErrorAction SilentlyContinue
+# Biblioteka presetow: skopiuj do %APPDATA%\Producersources\MELTIT\Presets
+Copy-Item (Join-Path $root 'Resources/Presets') "$out/Presets" -Recurse
 
 Write-Host ''
 Write-Host "Gotowe: $out" -ForegroundColor Green

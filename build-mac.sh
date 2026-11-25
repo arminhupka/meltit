@@ -52,6 +52,8 @@ mkdir -p "$OUT/Standalone" "$OUT/VST3"
 ditto "$APP" "$OUT/Standalone/MELTIT.app"
 ditto "$VST3" "$OUT/VST3/Tape Multi-FX.vst3"
 cp Assets/Fonts/*.txt "$OUT/" 2>/dev/null || true
+# Biblioteka presetow: skopiuj do ~/Library/Application Support/Producersources/MELTIT/Presets
+cp -R Resources/Presets "$OUT/Presets"
 
 # Podpis ad-hoc (lokalne uruchamianie; do dystrybucji uzyj Developer ID + notaryzacji)
 codesign --force --deep --sign - "$OUT/Standalone/MELTIT.app"

@@ -1,6 +1,6 @@
 # MELTIT FX Plugin
 
-MELTIT w formacie Standalone i VST3. Hosty DAW wyświetlają VST3 pod nazwą Tape Multi-FX. Zależności JUCE 9.0.2 i Signalsmith są dostępne lokalnie w `ThirdParty/`.
+MELTIT w formacie Standalone i VST3. Hosty DAW wyświetlają VST3 pod nazwą Tape Multi-FX. Vendor: Producersources. Presety i dane użytkownika są w `%APPDATA%ProducersourcesMELTIT` (macOS: `~/Library/Application Support/Producersources/MELTIT/`); folder `Presets` z paczki `dist` trzeba tam skopiować. Zależności JUCE 9.0.2 i Signalsmith są dostępne lokalnie w `ThirdParty/`.
 
 ## Budowanie na Windows
 

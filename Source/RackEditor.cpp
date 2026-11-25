@@ -6906,10 +6906,30 @@ private:
         inspector->open(from - inspector->getPosition());
     }
 
+    // Presets and other user data live in %APPDATA%/Producersources/MELTIT (~/Library/Application Support/... on macOS).
+    static juce::File dataDirectory()
+    {
+        auto base = juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory);
+       #if JUCE_MAC
+        base = base.getChildFile("Application Support");
+       #endif
+        return base.getChildFile("Producersources").getChildFile("MELTIT");
+    }
+
     static juce::File libraryDirectory()
     {
-        return juce::File::getSpecialLocation(juce::File::userDocumentsDirectory)
-            .getChildFile("VST3 Presets/Tape Prototype/Tape Multi-FX");
+        static const auto directory = []
+        {
+            const auto target = dataDirectory().getChildFile("Presets");
+            // A library kept by earlier versions in Documents is carried over once.
+            const auto previous = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory)
+                                      .getChildFile("VST3 Presets/Tape Prototype/Tape Multi-FX");
+            if (!target.exists() && previous.isDirectory())
+                previous.copyDirectoryTo(target);
+            target.createDirectory();
+            return target;
+        }();
+        return directory;
     }
 
     static juce::PopupMenu libraryMenu(const juce::File& directory, juce::Array<juce::File>& files)
