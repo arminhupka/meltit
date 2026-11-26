@@ -11,6 +11,8 @@
  #include <Windows.h>
  #undef min
  #undef max
+#elif JUCE_MAC
+ #include <CoreFoundation/CoreFoundation.h>
 #endif
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter();
@@ -138,8 +140,11 @@ void dispatch()
         juce::Thread::sleep(12);
     }
 #else
-    // Same on macOS/Linux: let the message loop run the drop callback and the drawer animation.
-    juce::MessageManager::getInstance()->runDispatchLoopUntil(120);
+    // Same on macOS: run the main run loop, which carries the drop callback and the drawer animation.
+    // (MessageManager::runDispatchLoopUntil is compiled out unless JUCE_MODAL_LOOPS_PERMITTED is set.)
+   #if JUCE_MAC
+    CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0.12, false);
+   #endif
 #endif
     juce::Timer::callPendingTimersSynchronously();
 }
