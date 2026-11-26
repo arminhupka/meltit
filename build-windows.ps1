@@ -33,7 +33,7 @@ if (-not $SkipTests) {
 
 $artefacts = Join-Path $buildDir 'TapeMultiFx_artefacts/Release'
 $exe  = Join-Path $artefacts 'Standalone/MELTIT.exe'
-$vst3 = Join-Path $artefacts 'VST3/Tape Multi-FX.vst3'
+$vst3 = Join-Path $artefacts 'VST3/MELTIT.vst3'
 foreach ($p in @($exe, $vst3)) {
     if (-not (Test-Path $p)) { throw "Brak pliku po buildzie: $p" }
 }
@@ -45,8 +45,6 @@ New-Item -ItemType Directory -Path "$out/Standalone", "$out/VST3" -Force | Out-N
 Copy-Item $exe "$out/Standalone/"
 Copy-Item $vst3 "$out/VST3/" -Recurse
 Copy-Item (Join-Path $root 'Assets/Fonts/*.txt') $out -ErrorAction SilentlyContinue
-# Biblioteka presetow: skopiuj do %APPDATA%\Producersources\MELTIT\Presets
-Copy-Item (Join-Path $root 'Resources/Presets') "$out/Presets" -Recurse
 
 Write-Host ''
 Write-Host "Gotowe: $out" -ForegroundColor Green

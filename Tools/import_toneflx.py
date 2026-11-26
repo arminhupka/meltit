@@ -1,4 +1,4 @@
-"""Convert a local TONEFLX/FFWD library to Tape Multi-FX VST3 presets."""
+"""Convert a local TONEFLX/FFWD library to MELTIT VST3 presets."""
 
 import argparse
 from collections import Counter
@@ -113,7 +113,7 @@ def convert(root):
         globals_ = globals_node.attrib if globals_node is not None else {}
         graph = [m.get("id") for m in core.findall("FXGraph/Module")]
         if not graph:
-            warnings.add("No saved routing. Used Tape Multi-FX default order.")
+            warnings.add("No saved routing. Used MELTIT default order.")
     elif root.tag in {"Core0_" + module for module in MODULES}:
         source, globals_, graph = root.attrib, {}, []
     else:
@@ -245,7 +245,7 @@ class PresetWriter:
         self.header = template[:40]
         list_offset, = struct.unpack_from("<Q", template, 40)
         if self.header[:4] != b"VST3" or template[list_offset:list_offset + 4] != b"List":
-            raise ValueError("Tape Multi-FX did not provide a VST3 preset template")
+            raise ValueError("MELTIT did not provide a VST3 preset template")
         count, = struct.unpack_from("<I", template, list_offset + 4)
         self.chunks = {}
         for index in range(count):
@@ -256,7 +256,7 @@ class PresetWriter:
         self.state = ET.fromstring(component[8:8 + length])
         self.trailer = component[8 + length:]
         if component[:4] != b"VC2!" or self.state.tag != "TapeMultiFxSettings":
-            raise ValueError("The destination plug-in is not Tape Multi-FX")
+            raise ValueError("The destination plug-in is not MELTIT")
 
     def render(self, settings):
         state = deepcopy(self.state)
@@ -281,7 +281,7 @@ def main():
     parser.add_argument("source", type=Path)
     parser.add_argument("destination", type=Path)
     parser.add_argument("--plugin", type=Path, default=Path(os.environ["CommonProgramFiles"]) / "VST3" /
-                        "Tape Multi-FX.vst3" / "Contents" / "x86_64-win" / "Tape Multi-FX.vst3")
+                        "MELTIT.vst3" / "Contents" / "x86_64-win" / "MELTIT.vst3")
     args = parser.parse_args()
     source = args.source.resolve(strict=True)
     destination = args.destination.resolve()

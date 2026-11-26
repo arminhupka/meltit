@@ -4,6 +4,7 @@
 #include "PresetFile.h"
 #include "RackEditor.h"
 #include "RackPresets.h"
+#include "PresetLibrary.h"
 #include "ReverseReverb.h"
 #include "SpatialEffects.h"
 #include "TapeDsp.h"
@@ -366,6 +367,8 @@ public:
             values[1][i] = state.getRawParameterValue(secondaryId(parameterIds[i]));
         }
         defaultState = state.copyState();
+        // Unpack the built-in presets into the user's data folder when they are not there yet.
+        juce::Thread::launch([] { rack::presetLibraryDirectory(); });
     }
 
     void prepareToPlay(double sampleRate, int maximumBlockSize) override
@@ -593,7 +596,7 @@ public:
 
     bool hasEditor() const override { return true; }
     juce::AudioProcessorEditor* createEditor() override { return rack::makeCartridgeEditor(*this, state, *this); }
-    const juce::String getName() const override { return "Tape Multi-FX"; }
+    const juce::String getName() const override { return "MELTIT"; }
     bool acceptsMidi() const override { return true; }
     bool producesMidi() const override { return false; }
     double getTailLengthSeconds() const override

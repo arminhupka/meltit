@@ -7,7 +7,7 @@ add_subdirectory("${JUCE_SOURCE_DIR}" juce)
 juce_add_plugin(TapeMultiFx
     COMPANY_NAME "Producersources"
     BUNDLE_ID "com.producersources.meltit"
-    PRODUCT_NAME "Tape Multi-FX"
+    PRODUCT_NAME "MELTIT"
     PLUGIN_MANUFACTURER_CODE Tprj
     PLUGIN_CODE Tpm2
     VST3_CATEGORIES Fx Modulation
@@ -16,14 +16,6 @@ juce_add_plugin(TapeMultiFx
     COPY_PLUGIN_AFTER_BUILD FALSE)
 
 set_target_properties(TapeMultiFx_Standalone PROPERTIES OUTPUT_NAME "MELTIT")
-if(APPLE)
-    # JUCE writes CFBundleExecutable from the shared PRODUCT_NAME ("Tape Multi-FX"); it must match
-    # the renamed executable or macOS reports the .app as "damaged or incomplete".
-    add_custom_command(TARGET TapeMultiFx_Standalone POST_BUILD
-        COMMAND /usr/libexec/PlistBuddy -c "Set :CFBundleExecutable MELTIT"
-            "$<TARGET_BUNDLE_CONTENT_DIR:TapeMultiFx_Standalone>/Info.plist"
-        VERBATIM)
-endif()
 set(meltit_font_licenses
     "${CMAKE_CURRENT_SOURCE_DIR}/Assets/Fonts/Fontshare-FFL.txt"
     "${CMAKE_CURRENT_SOURCE_DIR}/Assets/Fonts/AzeretMono-OFL.txt")
@@ -52,6 +44,21 @@ juce_add_binary_data(TapeMultiFxArt HEADER_NAME CartridgeArt.h NAMESPACE Cartrid
         Assets/Fonts/PilcrowRoundedSemibold.otf
         Assets/Fonts/AzeretMonoRegular.otf)
 
+# The preset library ships inside the plug-in as one zip and is unpacked into the user's data folder on first run.
+file(GLOB_RECURSE meltit_preset_files CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Resources/Presets/*")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${meltit_preset_files})
+set(meltit_preset_zip "${CMAKE_CURRENT_BINARY_DIR}/MeltitPresets.zip")
+file(REMOVE "${meltit_preset_zip}")
+execute_process(
+    COMMAND ${CMAKE_COMMAND} -E tar cf "${meltit_preset_zip}" --format=zip Presets
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/Resources"
+    RESULT_VARIABLE meltit_zip_result)
+if(NOT meltit_zip_result EQUAL 0)
+    message(FATAL_ERROR "Could not pack Resources/Presets")
+endif()
+juce_add_binary_data(TapeMultiFxPresets HEADER_NAME MeltitPresets.h NAMESPACE MeltitPresets
+    SOURCES "${meltit_preset_zip}")
+
 set(plugin_sources
     Source/RackProcessor.cpp
     Source/RackEditor.cpp
@@ -59,6 +66,7 @@ set(plugin_sources
     Source/RetroArt.cpp
     Source/RetroArt.h
     Source/RackPresets.h
+    Source/PresetLibrary.h
     Source/PresetFile.h
     Source/Dsp/Effects.h
     Source/Dsp/GlobalEffects.h
@@ -81,7 +89,7 @@ target_compile_definitions(TapeMultiFx PUBLIC
     JUCE_WEB_BROWSER=0
     JUCE_USE_CURL=0
     JUCE_VST3_CAN_REPLACE_VST2=0)
-target_link_libraries(TapeMultiFx PRIVATE TapeMultiFxArt juce::juce_audio_processors juce::juce_audio_utils juce::juce_dsp)
+target_link_libraries(TapeMultiFx PRIVATE TapeMultiFxArt TapeMultiFxPresets juce::juce_audio_processors juce::juce_audio_utils juce::juce_dsp)
 
 option(BUILD_TESTING "Build JUCE editor and transport tests" ON)
 if(BUILD_TESTING)

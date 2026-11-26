@@ -42,7 +42,7 @@ fi
 
 ART="$BUILD_DIR/TapeMultiFx_artefacts/Release"
 APP="$ART/Standalone/MELTIT.app"
-VST3="$ART/VST3/Tape Multi-FX.vst3"
+VST3="$ART/VST3/MELTIT.vst3"
 [ -d "$APP" ]  || { echo "Brak po buildzie: $APP" >&2; exit 1; }
 [ -d "$VST3" ] || { echo "Brak po buildzie: $VST3" >&2; exit 1; }
 
@@ -50,14 +50,12 @@ rm -rf "$OUT"
 mkdir -p "$OUT/Standalone" "$OUT/VST3"
 # ditto zachowuje atrybuty i symlinki bundli
 ditto "$APP" "$OUT/Standalone/MELTIT.app"
-ditto "$VST3" "$OUT/VST3/Tape Multi-FX.vst3"
+ditto "$VST3" "$OUT/VST3/MELTIT.vst3"
 cp Assets/Fonts/*.txt "$OUT/" 2>/dev/null || true
-# Biblioteka presetow: skopiuj do ~/Library/Application Support/Producersources/MELTIT/Presets
-cp -R Resources/Presets "$OUT/Presets"
 
 # Podpis ad-hoc (lokalne uruchamianie; do dystrybucji uzyj Developer ID + notaryzacji)
 codesign --force --deep --sign - "$OUT/Standalone/MELTIT.app"
-codesign --force --deep --sign - "$OUT/VST3/Tape Multi-FX.vst3"
+codesign --force --deep --sign - "$OUT/VST3/MELTIT.vst3"
 
 echo
 echo "Gotowe: $OUT"

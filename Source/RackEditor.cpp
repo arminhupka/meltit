@@ -1,5 +1,6 @@
 #include "RackEditor.h"
 #include "RackPresets.h"
+#include "PresetLibrary.h"
 #include "RetroArt.h"
 #include "Modulation.h"
 #include "TimeStretch.h"
@@ -6906,31 +6907,7 @@ private:
         inspector->open(from - inspector->getPosition());
     }
 
-    // Presets and other user data live in %APPDATA%/Producersources/MELTIT (~/Library/Application Support/... on macOS).
-    static juce::File dataDirectory()
-    {
-        auto base = juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory);
-       #if JUCE_MAC
-        base = base.getChildFile("Application Support");
-       #endif
-        return base.getChildFile("Producersources").getChildFile("MELTIT");
-    }
-
-    static juce::File libraryDirectory()
-    {
-        static const auto directory = []
-        {
-            const auto target = dataDirectory().getChildFile("Presets");
-            // A library kept by earlier versions in Documents is carried over once.
-            const auto previous = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory)
-                                      .getChildFile("VST3 Presets/Tape Prototype/Tape Multi-FX");
-            if (!target.exists() && previous.isDirectory())
-                previous.copyDirectoryTo(target);
-            target.createDirectory();
-            return target;
-        }();
-        return directory;
-    }
+    static juce::File libraryDirectory() { return presetLibraryDirectory(); }
 
     static juce::PopupMenu libraryMenu(const juce::File& directory, juce::Array<juce::File>& files)
     {
@@ -7040,7 +7017,7 @@ private:
     void importPreset()
     {
         auto directory = selectedFile.existsAsFile() ? selectedFile.getParentDirectory() : libraryDirectory();
-        chooser = std::make_unique<juce::FileChooser>("Import a Tape Multi-FX preset", directory, "*.vstpreset");
+        chooser = std::make_unique<juce::FileChooser>("Import a MELTIT preset", directory, "*.vstpreset");
         chooser->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
             [safe = juce::Component::SafePointer<CartridgeSurface>(this)](const juce::FileChooser& dialog)
             {
@@ -7059,7 +7036,7 @@ private:
             preset.setButtonText(file.getFileNameWithoutExtension());
         }
         else
-            notice.show("Import failed", "Could not load this Tape Multi-FX preset.");
+            notice.show("Import failed", "Could not load this MELTIT preset.");
     }
 
     void loadFactory(int index)

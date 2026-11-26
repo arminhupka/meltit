@@ -1,4 +1,4 @@
-"""Convert Output Portal presets (XML) to Tape Multi-FX VST3 presets built around the Grain card.
+"""Convert Output Portal presets (XML) to MELTIT VST3 presets built around the Grain card.
 
 The granulator maps onto the Grain card, the two FX slots onto the nearest rack cards, Macro 1 and 2 onto the XY pad's
 X and Y, Envelope 1 onto the step sequencer and Envelope 2 onto LFO 1. Everything that has no counterpart is listed in
@@ -392,7 +392,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("source", type=Path)
     parser.add_argument("destination", type=Path)
-    parser.add_argument("--plugin", type=Path, required=True, help="Tape Multi-FX.vst3 binary with the Grain card")
+    parser.add_argument("--plugin", type=Path, required=True, help="MELTIT.vst3 binary with the Grain card")
     parser.add_argument("--limit", type=int, default=0)
     args = parser.parse_args()
     from pedalboard import load_plugin
