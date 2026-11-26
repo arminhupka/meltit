@@ -137,6 +137,9 @@ void dispatch()
         }
         juce::Thread::sleep(12);
     }
+#else
+    // Same on macOS/Linux: let the message loop run the drop callback and the drawer animation.
+    juce::MessageManager::getInstance()->runDispatchLoopUntil(120);
 #endif
     juce::Timer::callPendingTimersSynchronously();
 }
