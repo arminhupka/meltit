@@ -1,18 +1,18 @@
-add_executable(TapeMultiFxTransportTest test_transport.cpp)
-add_executable(TapeMultiFxEditorTest test_editor.cpp)
+add_executable(MELTITTransportTest test_transport.cpp)
+add_executable(MELTITEditorTest test_editor.cpp)
 
-foreach(test_target IN ITEMS TapeMultiFxTransportTest TapeMultiFxEditorTest)
+foreach(test_target IN ITEMS MELTITTransportTest MELTITEditorTest)
     target_compile_features(${test_target} PRIVATE cxx_std_20)
     target_include_directories(${test_target} PRIVATE
         "${PROJECT_SOURCE_DIR}/Source"
         "${PROJECT_SOURCE_DIR}/Source/Dsp"
         "${JUCE_SOURCE_DIR}/modules")
     target_compile_definitions(${test_target} PRIVATE JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1)
-    target_link_libraries(${test_target} PRIVATE TapeMultiFx)
+    target_link_libraries(${test_target} PRIVATE MELTIT)
 endforeach()
 
-add_test(NAME TapeMultiFx.Transport COMMAND TapeMultiFxTransportTest)
-add_test(NAME TapeMultiFx.Editor COMMAND TapeMultiFxEditorTest
+add_test(NAME MELTIT.Transport COMMAND MELTITTransportTest)
+add_test(NAME MELTIT.Editor COMMAND MELTITEditorTest
     "${CMAKE_CURRENT_BINARY_DIR}/editor-preview.png"
     "${PROJECT_SOURCE_DIR}/Resources/Presets/3. BASIC FX/REVERSE/-OCTAVE 1-2.vstpreset"
     "${CMAKE_CURRENT_BINARY_DIR}/editor-chorus.png"

@@ -16,12 +16,12 @@ ctest --preset windows-release
 
 ```powershell
 cmake --preset windows-x64
-cmake --build build/windows-x64 --config Release --target TapeMultiFx_Standalone
-& "./build/windows-x64/TapeMultiFx_artefacts/Release/Standalone/MELTIT.exe"
+cmake --build build/windows-x64 --config Release --target MELTIT_Standalone
+& "./build/windows-x64/MELTIT_artefacts/Release/Standalone/MELTIT.exe"
 ```
 
 
-CMake generuje projekt Visual Studio w `build/windows-x64/`. Pakiet VST3 trafia do `build/windows-x64/TapeMultiFx_artefacts/Release/VST3/`.
+CMake generuje projekt Visual Studio w `build/windows-x64/`. Pakiet VST3 trafia do `build/windows-x64/MELTIT_artefacts/Release/VST3/`.
 
 ## Katalogi
 

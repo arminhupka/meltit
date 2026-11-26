@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.22)
-project(TapeMultiFx VERSION 0.8.4 LANGUAGES C CXX)
+project(MELTIT VERSION 0.8.4 LANGUAGES C CXX)
 
 set(JUCE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/JUCE" CACHE PATH "Local JUCE checkout")
 add_subdirectory("${JUCE_SOURCE_DIR}" juce)
 
-juce_add_plugin(TapeMultiFx
+juce_add_plugin(MELTIT
     COMPANY_NAME "Producersources"
     BUNDLE_ID "com.producersources.meltit"
     PRODUCT_NAME "MELTIT"
@@ -15,29 +15,29 @@ juce_add_plugin(TapeMultiFx
     FORMATS VST3 Standalone
     COPY_PLUGIN_AFTER_BUILD FALSE)
 
-set_target_properties(TapeMultiFx_Standalone PROPERTIES OUTPUT_NAME "MELTIT")
+set_target_properties(MELTIT_Standalone PROPERTIES OUTPUT_NAME "MELTIT")
 set(meltit_font_licenses
     "${CMAKE_CURRENT_SOURCE_DIR}/Assets/Fonts/Fontshare-FFL.txt"
     "${CMAKE_CURRENT_SOURCE_DIR}/Assets/Fonts/AzeretMono-OFL.txt")
 if(APPLE)
     # Bundle layout: only executables belong in Contents/MacOS.
-    set(meltit_standalone_license_dir "$<TARGET_FILE_DIR:TapeMultiFx_Standalone>/../Resources")
+    set(meltit_standalone_license_dir "$<TARGET_FILE_DIR:MELTIT_Standalone>/../Resources")
 else()
-    set(meltit_standalone_license_dir "$<TARGET_FILE_DIR:TapeMultiFx_Standalone>")
+    set(meltit_standalone_license_dir "$<TARGET_FILE_DIR:MELTIT_Standalone>")
 endif()
-add_custom_command(TARGET TapeMultiFx_Standalone POST_BUILD
+add_custom_command(TARGET MELTIT_Standalone POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory "${meltit_standalone_license_dir}"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${meltit_font_licenses} "${meltit_standalone_license_dir}"
     VERBATIM)
-add_custom_command(TARGET TapeMultiFx_VST3 POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:TapeMultiFx_VST3>/../Resources"
+add_custom_command(TARGET MELTIT_VST3 POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:MELTIT_VST3>/../Resources"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${meltit_font_licenses} "$<TARGET_FILE_DIR:TapeMultiFx_VST3>/../Resources"
+        ${meltit_font_licenses} "$<TARGET_FILE_DIR:MELTIT_VST3>/../Resources"
     VERBATIM)
 
 # The editor artwork is drawn in code (Source/RetroArt.cpp); only the typefaces are embedded.
-juce_add_binary_data(TapeMultiFxArt HEADER_NAME CartridgeArt.h NAMESPACE CartridgeArt
+juce_add_binary_data(MELTITArt HEADER_NAME CartridgeArt.h NAMESPACE CartridgeArt
     SOURCES
         Assets/Fonts/TechnorSemibold.otf
         Assets/Fonts/PilcrowRoundedMedium.otf
@@ -56,7 +56,7 @@ execute_process(
 if(NOT meltit_zip_result EQUAL 0)
     message(FATAL_ERROR "Could not pack Resources/Presets")
 endif()
-juce_add_binary_data(TapeMultiFxPresets HEADER_NAME MeltitPresets.h NAMESPACE MeltitPresets
+juce_add_binary_data(MELTITPresets HEADER_NAME MeltitPresets.h NAMESPACE MeltitPresets
     SOURCES "${meltit_preset_zip}")
 
 set(plugin_sources
@@ -79,17 +79,17 @@ set(plugin_sources
     Source/Dsp/VhsDegrade.h
     Source/Dsp/TapeTransport.h
     Source/Dsp/GenerationLoss.h)
-target_sources(TapeMultiFx PRIVATE ${plugin_sources})
+target_sources(MELTIT PRIVATE ${plugin_sources})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/Source" PREFIX Source FILES ${plugin_sources})
-target_include_directories(TapeMultiFx PRIVATE Source/Dsp)
-target_include_directories(TapeMultiFx SYSTEM PRIVATE ThirdParty/Signalsmith)
-target_compile_features(TapeMultiFx PRIVATE cxx_std_20)
-target_compile_options(TapeMultiFx PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
-target_compile_definitions(TapeMultiFx PUBLIC
+target_include_directories(MELTIT PRIVATE Source/Dsp)
+target_include_directories(MELTIT SYSTEM PRIVATE ThirdParty/Signalsmith)
+target_compile_features(MELTIT PRIVATE cxx_std_20)
+target_compile_options(MELTIT PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+target_compile_definitions(MELTIT PUBLIC
     JUCE_WEB_BROWSER=0
     JUCE_USE_CURL=0
     JUCE_VST3_CAN_REPLACE_VST2=0)
-target_link_libraries(TapeMultiFx PRIVATE TapeMultiFxArt TapeMultiFxPresets juce::juce_audio_processors juce::juce_audio_utils juce::juce_dsp)
+target_link_libraries(MELTIT PRIVATE MELTITArt MELTITPresets juce::juce_audio_processors juce::juce_audio_utils juce::juce_dsp)
 
 option(BUILD_TESTING "Build JUCE editor and transport tests" ON)
 if(BUILD_TESTING)

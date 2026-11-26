@@ -20,10 +20,10 @@
       "configurePreset": "windows-x64",
       "configuration": "Release",
       "targets": [
-        "TapeMultiFx_Standalone",
-        "TapeMultiFx_VST3",
-        "TapeMultiFxTransportTest",
-        "TapeMultiFxEditorTest"
+        "MELTIT_Standalone",
+        "MELTIT_VST3",
+        "MELTITTransportTest",
+        "MELTITEditorTest"
       ]
     }
   ],

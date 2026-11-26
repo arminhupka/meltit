@@ -31,7 +31,7 @@ if (-not $SkipTests) {
     Invoke-Step 'Testy' { ctest --preset windows-release }
 }
 
-$artefacts = Join-Path $buildDir 'TapeMultiFx_artefacts/Release'
+$artefacts = Join-Path $buildDir 'MELTIT_artefacts/Release'
 $exe  = Join-Path $artefacts 'Standalone/MELTIT.exe'
 $vst3 = Join-Path $artefacts 'VST3/MELTIT.vst3'
 foreach ($p in @($exe, $vst3)) {

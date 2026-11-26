@@ -33,14 +33,14 @@ cmake -S . -B "$BUILD_DIR" \
 JOBS="$(sysctl -n hw.ncpu)"
 echo "==> Budowanie (Release)"
 cmake --build "$BUILD_DIR" --config Release --parallel "$JOBS" \
-  --target TapeMultiFx_Standalone TapeMultiFx_VST3 TapeMultiFxTransportTest TapeMultiFxEditorTest
+  --target MELTIT_Standalone MELTIT_VST3 MELTITTransportTest MELTITEditorTest
 
 if [ "$SKIP_TESTS" = 0 ]; then
   echo "==> Testy"
   ctest --test-dir "$BUILD_DIR" -C Release --output-on-failure
 fi
 
-ART="$BUILD_DIR/TapeMultiFx_artefacts/Release"
+ART="$BUILD_DIR/MELTIT_artefacts/Release"
 APP="$ART/Standalone/MELTIT.app"
 VST3="$ART/VST3/MELTIT.vst3"
 [ -d "$APP" ]  || { echo "Brak po buildzie: $APP" >&2; exit 1; }
