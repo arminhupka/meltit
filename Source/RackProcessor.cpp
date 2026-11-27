@@ -956,11 +956,19 @@ private:
         return loaded;
     }
 
-    void generate(int tag, uint32_t seed) override
+    bool savePresetFile(const juce::File& file) override
+    {
+        juce::MemoryBlock component;
+        getStateInformation(component);
+        const auto like = rack::presetLibraryDirectory().findChildFiles(juce::File::findFiles, true, "*.vstpreset");
+        return rack::writePresetComponent(file, component, like.isEmpty() ? juce::File{} : like.getFirst());
+    }
+
+    void generate(int tag, uint32_t seed, int strength) override
     {
         if (tag >= 0 && tag < static_cast<int>(rack::tagNames.size()))
         {
-            const auto generated = rack::generatePreset(tag, seed);
+            const auto generated = rack::generatePreset(tag, seed, strength);
             if (generated.variation >= 0)
                 applyPreset(generated.values, { rack::generatedOriginBase + tag, generated.variation });
         }

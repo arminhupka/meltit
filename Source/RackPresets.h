@@ -121,29 +121,96 @@ inline std::string generatedName(int variation)
     return std::string(adjective) + " " + noun;
 }
 
+// Settings for the cartridges no factory preset uses, so Generate can reach every effect in the rack. They are not
+// listed in the preset menu.
+inline const std::array<Preset, 3>& generatorExtras()
+{
+    static const std::array<Preset, 3> extras {{
+        { "Stretch Swell", 2, {{ "stretch_active", 1 }, { "stretch_engine", 0 }, { "stretch_length", 2 },
+            { "stretch_shape", 3 }, { "stretch_ratio", 3, 1 }, { "stretch_start", 0 }, { "stretch_land", 70, 15 },
+            { "stretch_mix", 55, 10 }} },
+        { "Worn Tape Deck", 1, {{ "vhs_active", 1 }, { "vhs_speed", 1 }, { "vhs_wear", 40, 12 },
+            { "vhs_tracking", 25, 10 }, { "vhs_wobble", 35, 10 }, { "vhs_mix", 70, 10 }} },
+        { "Grain Cloud", 4, {{ "grain_active", 1 }, { "grain_size", 140, 40 }, { "grain_density", 14, 5 },
+            { "grain_position", 120, 60 }, { "grain_pitch", 0 }, { "grain_voices", 8 }, { "grain_width", 70, 10 },
+            { "grain_feedback", 20, 8 }, { "grain_mix", 40, 10 }} }
+    }};
+    return extras;
+}
+
+// A new setting for one cartridge ("delay", "reverb", ...): how a randomly picked preset sets that effect up, with
+// every value that varies between racks pushed well past what Generate does. The power switch and the slot choice
+// are left out, so the cartridge stays on or off as it was.
+inline std::vector<PresetValue> randomCartridgeValues(const std::string& cartridge, uint32_t seed)
+{
+    const auto active = cartridge + "_active";
+    std::vector<const Preset*> candidates;
+    const auto consider = [&](const Preset& preset)
+    {
+        const auto& values = preset.values;
+        const auto uses = std::any_of(values.begin(), values.end(),
+            [&](const auto& entry) { return cartridgeOf(entry.id) == cartridge && active != entry.id; });
+        const auto off = std::any_of(values.begin(), values.end(),
+            [&](const auto& entry) { return active == entry.id && entry.value < .5f; });
+        if (uses && !off)
+            candidates.push_back(&preset);
+    };
+    for (size_t i = 1; i < presets().size(); ++i)
+        consider(presets()[i]);
+    for (const auto& extra : generatorExtras())
+        consider(extra);
+    if (candidates.empty())
+        return {};
+
+    std::mt19937 random(seed);
+    std::vector<PresetValue> result;
+    for (auto entry : candidates[random() % candidates.size()]->values)
+    {
+        const std::string id(entry.id);
+        if (cartridgeOf(entry.id) != cartridge || id == active || id.size() >= 5 && id.compare(id.size() - 5, 5, "_slot") == 0)
+            continue;
+        if (entry.variation != 0)
+        {
+            const auto bipolar = (static_cast<float>(random() & 0xffffu) / 65535.0f) * 2.0f - 1.0f;
+            entry.value += 2.2f * entry.variation * bipolar;
+        }
+        result.push_back(entry);
+    }
+    return result;
+}
+
 // Builds a new rack from cartridges set up in different presets: a lead preset (of the chosen style) gives one of
 // its cartridges and the rack-wide settings, and two or three more cartridges come from other presets, each with
-// its own preset's settings, nudged a little.
-inline GeneratedPreset generatePreset(int tag, uint32_t seed)
+// its own preset's settings, nudged a little. Every effect can be picked.
+// `strength` (0 subtle, 1 normal, 2 wild) sets how many cartridges the rack gets and how far values are nudged.
+inline GeneratedPreset generatePreset(int tag, uint32_t seed, int strength = 1)
 {
+    strength = std::clamp(strength, 0, 2);
     struct Part
     {
         size_t preset;
         std::string cartridge;
     };
+    // The factory presets (not Initialize) followed by the generator-only ones.
+    std::vector<const Preset*> sources;
+    for (size_t i = 1; i < presets().size(); ++i)
+        sources.push_back(&presets()[i]);
+    for (const auto& extra : generatorExtras())
+        sources.push_back(&extra);
+
     // Every cartridge a preset switches on, with the preset it is set up in.
     std::vector<Part> parts;
-    for (size_t i = 1; i < presets().size(); ++i)
+    for (size_t i = 0; i < sources.size(); ++i)
     {
         std::vector<std::string> seen;
-        for (const auto& entry : presets()[i].values)
+        for (const auto& entry : sources[i]->values)
         {
             const auto cartridge = cartridgeOf(entry.id);
             if (cartridge.empty() || std::find(seen.begin(), seen.end(), cartridge) != seen.end())
                 continue;
             seen.push_back(cartridge);
             const auto active = cartridge + "_active";
-            const auto& values = presets()[i].values;
+            const auto& values = sources[i]->values;
             const auto off = std::any_of(values.begin(), values.end(), [&active](const auto& value)
                 { return active == value.id && value.value < .5f; });
             if (!off)
@@ -154,7 +221,7 @@ inline GeneratedPreset generatePreset(int tag, uint32_t seed)
     std::mt19937 random(seed);
     std::vector<size_t> leads;
     for (size_t i = 0; i < parts.size(); ++i)
-        if (tag == 0 || presets()[parts[i].preset].tag == tag)
+        if (tag == 0 || sources[parts[i].preset]->tag == tag)
             leads.push_back(i);
     if (leads.empty())
         return {};
@@ -164,7 +231,7 @@ inline GeneratedPreset generatePreset(int tag, uint32_t seed)
     for (size_t i = 0; i < order.size(); ++i)
         order[i] = i;
     std::shuffle(order.begin(), order.end(), random);
-    const auto wanted = 3 + random() % 2;
+    const size_t wanted = strength == 0 ? 2 + random() % 2 : strength == 1 ? 3 + random() % 2 : 5 + random() % 2;
     // Prefer cartridges from presets not used yet; fall back to any preset for a cartridge not in the rack.
     for (const bool freshPreset : { true, false })
         for (const auto i : order)
@@ -180,24 +247,25 @@ inline GeneratedPreset generatePreset(int tag, uint32_t seed)
                 chosen.push_back(part);
         }
 
-    const auto nudge = [&random](PresetValue entry)
+    const auto reach = std::array { .35f, .8f, 1.6f }[static_cast<size_t>(strength)];
+    const auto nudge = [&random, reach](PresetValue entry)
     {
         if (entry.variation != 0)
         {
             const auto bipolar = (static_cast<float>(random() & 0xffffu) / 65535.0f) * 2.0f - 1.0f;
-            entry.value += .8f * entry.variation * bipolar;
+            entry.value += reach * entry.variation * bipolar;
         }
         return entry;
     };
     std::vector<PresetValue> values;
-    for (const auto& entry : presets()[chosen.front().preset].values)
+    for (const auto& entry : sources[chosen.front().preset]->values)
         if (cartridgeOf(entry.id).empty())
             values.push_back(nudge(entry));
     bool tape = false;
     for (const auto& part : chosen)
     {
         tape = tape || part.cartridge == "tape";
-        for (const auto& entry : presets()[part.preset].values)
+        for (const auto& entry : sources[part.preset]->values)
             if (cartridgeOf(entry.id) == part.cartridge && part.cartridge + "_active" != entry.id)
                 values.push_back(nudge(entry));
     }

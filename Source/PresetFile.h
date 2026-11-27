@@ -44,4 +44,36 @@ inline std::optional<juce::MemoryBlock> readPresetComponent(const juce::File& fi
     }
     return std::nullopt;
 }
+
+// Writes `component` (the plug-in's saved state) as a one-chunk VST3 preset. The class id in the header is copied
+// from `like`, any preset already made for this plug-in; the plug-in is left to its own host-less default (blank)
+// when there is none.
+inline bool writePresetComponent(const juce::File& file, const juce::MemoryBlock& component, const juce::File& like)
+{
+    char classId[32];
+    std::memset(classId, '0', sizeof(classId));
+    if (like.existsAsFile())
+    {
+        juce::FileInputStream source(like);
+        char header[40];
+        if (source.openedOk() && source.read(header, 40) == 40 && std::memcmp(header, "VST3", 4) == 0)
+            std::memcpy(classId, header + 8, 32);
+    }
+
+    juce::MemoryOutputStream out;
+    out.write("VST3", 4);
+    out.writeInt(1);
+    out.write(classId, 32);
+    const auto listOffset = static_cast<juce::int64>(48 + component.getSize());
+    out.writeInt64(listOffset);
+    out.write(component.getData(), component.getSize());
+    out.write("List", 4);
+    out.writeInt(1);
+    out.write("Comp", 4);
+    out.writeInt64(48);
+    out.writeInt64(static_cast<juce::int64>(component.getSize()));
+
+    file.getParentDirectory().createDirectory();
+    return file.replaceWithData(out.getData(), out.getDataSize());
+}
 }

@@ -5,7 +5,9 @@
 
 #include <cmath>
 #include <iostream>
+#include <set>
 #include <stdexcept>
+#include <string>
 
 #if JUCE_WINDOWS
  #include <Windows.h>
@@ -1469,6 +1471,35 @@ int main(int argc, char** argv)
             restore(*resumed, save(*processor));
             const auto reopened = openEditor(*resumed);
             check(presetName(*reopened) == generated, "Generated variation did not survive reload");
+        }
+
+        // Across the seeds Generate reaches every effect, not only those the factory presets use.
+        {
+            std::set<std::string> reached;
+            for (uint32_t seed = 1; seed < 400; ++seed)
+                for (const auto& entry : rack::generatePreset(0, seed).values)
+                    if (juce::String(entry.id).endsWith("_active") && entry.value > .5f)
+                        reached.insert(entry.id);
+            check(reached.size() == rack::cartridgeIds.size(), "Generate does not reach every effect");
+        }
+        // The dice on a card has a setting to deal for every effect, and never touches its power or slot.
+        for (const auto& ids : rack::cartridgeIds)
+        {
+            const auto values = rack::randomCartridgeValues(ids.name, 7);
+            check(!values.empty(), "A card's dice has nothing to deal");
+            for (const auto& entry : values)
+                check(juce::String(entry.id).startsWith(juce::String(ids.name) + "_") && juce::String(entry.id) != ids.active
+                          && !juce::String(entry.id).endsWith("_slot"),
+                      "A card's dice touches its power, its slot or another effect");
+        }
+        // A saved preset reads back as the same state.
+        {
+            const auto component = save(*processor);
+            const auto file = juce::File::getSpecialLocation(juce::File::tempDirectory).getChildFile("meltit-save-test.vstpreset");
+            check(rack::writePresetComponent(file, component, juce::File{}), "Could not write a preset");
+            const auto back = rack::readPresetComponent(file);
+            check(back.has_value() && *back == component, "A saved preset did not read back unchanged");
+            file.deleteFile();
         }
 
         if (argc >= 3)

@@ -68,7 +68,7 @@ void label(juce::Label& control, float size, juce::Colour colour, bool bold = fa
 enum class ButtonFace
 {
     selector, toggle, lamp, previous, next, options, controls, close, generate, presetName,
-    inspectorToggle, inspectorClose
+    inspectorToggle, inspectorClose, dice
 };
 
 void styleButton(juce::TextButton& control, ButtonFace face)
@@ -1134,7 +1134,8 @@ public:
     void drawPopupMenuItemWithOptions(juce::Graphics& g, const juce::Rectangle<int>& area, bool highlighted,
                                       const juce::PopupMenu::Item& item, const juce::PopupMenu::Options&) override
     {
-        retro::menuItem(g, area, item.text, item.isSeparator, item.isEnabled, highlighted, item.isTicked,
+        retro::menuItem(g, area, item.text, item.isSeparator, item.isEnabled && !item.isSectionHeader,
+                        highlighted && !item.isSectionHeader, item.isTicked,
                         item.subMenu != nullptr);
     }
 
@@ -1241,6 +1242,26 @@ public:
                                  opacity, button.isOver() || button.isDown());
                 break;
             case ButtonFace::close: art.drawButtonFace(g, CartridgeImages::close, bounds, opacity); break;
+            case ButtonFace::dice:
+            {
+                // A small die: clicking it deals the card a new setting.
+                const auto side = juce::jmin(bounds.getWidth(), bounds.getHeight()) * .82f;
+                const auto die = bounds.toFloat().withSizeKeepingCentre(side, side);
+                const auto lit = button.isOver() || button.isDown();
+                g.setColour(juce::Colours::black.withAlpha(.5f * opacity));
+                g.fillRoundedRectangle(die.translated(.6f, 1.2f), 3.5f);
+                g.setGradientFill(juce::ColourGradient(juce::Colour(0xff3a4046).withAlpha(opacity), die.getX(), die.getY(),
+                                                       juce::Colour(0xff1d2024).withAlpha(opacity), die.getX(), die.getBottom(), false));
+                g.fillRoundedRectangle(die, 3.5f);
+                g.setColour(cream.withAlpha((lit ? .95f : .6f) * opacity));
+                g.drawRoundedRectangle(die.reduced(.5f), 3.5f, 1.f);
+                const auto pip = side * .1f;
+                for (const auto [fx, fy] : { std::pair { .27f, .27f }, std::pair { .73f, .27f }, std::pair { .5f, .5f },
+                                             std::pair { .27f, .73f }, std::pair { .73f, .73f } })
+                    g.fillEllipse(juce::Rectangle<float>(pip * 2, pip * 2).withCentre(
+                        { die.getX() + die.getWidth() * fx, die.getY() + die.getHeight() * fy }));
+                break;
+            }
             case ButtonFace::inspectorClose: art.drawInspectorClose(g, bounds, opacity); break;
             case ButtonFace::inspectorToggle:
                 art.drawInspectorSwitch(g, bounds, button.getToggleState(), opacity);
@@ -1446,6 +1467,7 @@ private:
             case ButtonFace::inspectorClose: area = fitted(area.reduced(2), 1.f).reduced(1); break;
             case ButtonFace::controls:
             case ButtonFace::close:
+            case ButtonFace::dice:
             case ButtonFace::toggle: area = fitted(area, 1.f).reduced(1); break;
             case ButtonFace::selector:
             case ButtonFace::presetName: break;
@@ -2055,6 +2077,9 @@ public:
         styleButton(details, ButtonFace::controls);
         details.setTitle(juce::String("All ") + modules[type].name + " controls");
         details.setComponentID(prefix + "controls");
+        styleButton(randomise, ButtonFace::dice);
+        randomise.setTitle(juce::String("Randomise ") + modules[type].name);
+        randomise.setComponentID(prefix + "randomise");
         if (prefix.endsWith("stretch_"))
         {
             strip.setComponentID(prefix + "map_screen");
@@ -2249,7 +2274,7 @@ public:
             reels.setBounds(retro::tapeWindowBounds(getLocalBounds()).getSmallestIntegerContainer());
     }
 
-    juce::TextButton power, details { "Controls" };
+    juce::TextButton power, details { "Controls" }, randomise { "Randomise" };
 
     // Power-on sequence, played once the drawer has dropped into place: the lamp stutters before it holds,
     // the controls rise in one after another and every knob sweeps to its end stop before settling.
@@ -2406,6 +2431,7 @@ public:
             // The cartridge's power lamp and the key to its full controls sit on the dock bar, beside eject.
             addAndMakeVisible(drawer->power);
             addAndMakeVisible(drawer->details);
+            addAndMakeVisible(drawer->randomise);
             drawer->refresh();
             if (animate)
             {
@@ -2433,6 +2459,7 @@ public:
         {
             drawer->power.setBounds(Area(16, 16).withCentre({ 16, ejectKey.getCentreY() }));
             drawer->details.setBounds(ejectKey.translated(-23, 0));
+            drawer->randomise.setBounds(ejectKey.translated(-46, 0));
         }
         drawerWindow.setBounds(4, slotHeight - drawerOverlap, getWidth() - 8, drawerHeight);
         placeDrawer();
@@ -2680,6 +2707,7 @@ private:
         {
             parts.push_back(&drawer->power);
             parts.push_back(&drawer->details);
+            parts.push_back(&drawer->randomise);
         }
         for (auto* part : parts)
         {
@@ -3238,8 +3266,8 @@ private:
     juce::VBlankAttachment frames { this, [this] { tick(); } };
 };
 
-// A cartridge Generate deals into the rack: it lifts off the shelf, gathers with the others in the middle of the
-// deck like a fanned hand, then is tossed over its slot and drops into the dock. Boxes are in the parent's coordinates.
+// A cartridge Generate deals into the rack: it lifts off the shelf, arcs over and drops straight into its dock.
+// Boxes are in the parent's coordinates.
 class FlyingCartridge final : public juce::Component
 {
 public:
@@ -3248,10 +3276,10 @@ public:
 
     struct Flight
     {
-        Box from, gather, to;
-        float fanAngle = 0, bob = 0;
-        double launch = 0, deal = 0; // When it leaves the shelf and when it leaves the hand, in ms.
-        bool fade = false;           // Its slot lies outside the visible rack, so it fades on the way down.
+        Box from, to;
+        float turn = 1;  // Which way it tilts on the way over.
+        double launch = 0; // When it leaves the shelf, in ms.
+        bool fade = false; // Its slot lies outside the visible rack, so it fades on the way down.
     };
 
     FlyingCartridge(const CartridgeImages& images, int cartridgeType, Flight path, std::function<void()> landed)
@@ -3272,7 +3300,7 @@ public:
         art.drawCartridge(g, card.toNearestInt(), type, false, 1.f);
     }
 
-    static constexpr double riseTime = 520, dropTime = 600;
+    static constexpr double flightTime = 780;
 
 private:
     static constexpr float baseWidth = 140.f, baseHeight = baseWidth / cartridgeAspect, margin = 44.f;
@@ -3297,33 +3325,19 @@ private:
             setVisible(true);
             toFront(false);
         }
-        const auto from = flight.from.getCentre(), gather = flight.gather.getCentre(), to = flight.to.getCentre();
-        if (now < flight.deal)
-        {
-            // Off the shelf: it lifts straight up first, then swings over to its place in the hand.
-            const auto u = juce::jlimit(0.f, 1.f, static_cast<float>((now - flight.launch) / riseTime));
-            const auto e = inOut(u);
-            const Point control(from.x, gather.y - 10.f);
-            auto at = from * ((1 - e) * (1 - e)) + control * (2 * e * (1 - e)) + gather * (e * e);
-            // Held in the hand, it breathes a little until it is dealt.
-            if (u >= 1.f)
-                at.y += 2.2f * std::sin(static_cast<float>(now * .0062) + flight.bob);
-            lift = smooth(juce::jmin(1.f, u * 1.6f));
-            place(lerp(flight.from, flight.gather, e).withCentre(at), flight.fanAngle * e + .1f * std::sin(u * juce::MathConstants<float>::pi));
-            return;
-        }
+        const auto from = flight.from.getCentre(), to = flight.to.getCentre();
 
-        // Dealt: tossed up and over its slot, then it falls faster and faster into the dock.
-        const auto u = juce::jlimit(0.f, 1.f, static_cast<float>((now - flight.deal) / dropTime));
-        const auto across = inOut(juce::jmin(1.f, u * 1.15f));
-        const auto x = gather.x + (to.x - gather.x) * across;
-        const auto y = gather.y + (to.y - gather.y) * u * u - 64.f * std::sin(u * juce::MathConstants<float>::pi) * (1.f - u);
-        const auto turn = flight.fanAngle >= 0 ? 1.f : -1.f;
-        const auto angle = flight.fanAngle * (1.f - across) + turn * .16f * std::sin(u * juce::MathConstants<float>::pi);
-        lift = 1.f - smooth(juce::jlimit(0.f, 1.f, (u - .55f) / .45f));
+        // Straight from the shelf to its slot: it lifts off, arcs over and falls faster and faster into the dock.
+        const auto u = juce::jlimit(0.f, 1.f, static_cast<float>((now - flight.launch) / flightTime));
+        const auto across = inOut(juce::jmin(1.f, u * 1.1f));
+        const auto x = from.x + (to.x - from.x) * across;
+        const auto y = from.y + (to.y - from.y) * u * u - 80.f * std::sin(u * juce::MathConstants<float>::pi) * (1.f - u);
+        const auto turn = flight.turn >= 0 ? 1.f : -1.f;
+        const auto angle = turn * .14f * std::sin(u * juce::MathConstants<float>::pi);
+        lift = smooth(juce::jmin(1.f, u * 4.f)) * (1.f - smooth(juce::jlimit(0.f, 1.f, (u - .55f) / .45f)));
         if (flight.fade)
             setAlpha(1.f - smooth(juce::jlimit(0.f, 1.f, (u - .45f) / .45f)));
-        place(lerp(flight.gather, flight.to, smooth(u)).withCentre({ x, y }), angle);
+        place(lerp(flight.from, flight.to, smooth(u)).withCentre({ x, y }), angle);
         if (u >= 1.f)
         {
             finished = true;
@@ -4047,6 +4061,19 @@ public:
         g.fillRoundedRectangle(bay, 5);
         g.setColour(juce::Colours::white.withAlpha(.07f));
         g.drawRoundedRectangle(bay.translated(0, 1).reduced(.5f), 5, 1);
+        // X and Y are one pad: a shared plate in the pad's two colours holds their columns together.
+        {
+            const auto columnOf = [this, &bay](size_t i)
+            {
+                return juce::Rectangle<float>(share(), bay.getHeight()).withCentre({ jack(i).getCentreX(), bay.getCentreY() });
+            };
+            const auto group = columnOf(5).getUnion(columnOf(6)).reduced(1.f, 1.f);
+            const juce::Colour gold(0xffe6c15a), mint(0xff8ff5c4);
+            g.setGradientFill(juce::ColourGradient(gold.withAlpha(.1f), group.getX(), 0, mint.withAlpha(.1f), group.getRight(), 0, false));
+            g.fillRoundedRectangle(group, 5);
+            g.setGradientFill(juce::ColourGradient(gold.withAlpha(.55f), group.getX(), 0, mint.withAlpha(.55f), group.getRight(), 0, false));
+            g.drawRoundedRectangle(group.reduced(.5f), 5, 1.2f);
+        }
         for (size_t i = 0; i < jackNames.size(); ++i)
         {
             const auto socket = jack(i);
@@ -4069,6 +4096,11 @@ public:
             g.setColour(juce::Colour(0xff060708));
             g.fillEllipse(socket.reduced(4.f));
         }
+        // A short bridge between the X and Y sockets.
+        const auto x = jack(5), y = jack(6);
+        g.setGradientFill(juce::ColourGradient(juce::Colour(0xffe6c15a).withAlpha(.7f), x.getRight(), 0,
+                                               juce::Colour(0xff8ff5c4).withAlpha(.7f), y.getX(), 0, false));
+        g.fillRoundedRectangle(juce::Rectangle<float>(y.getX() - x.getRight(), 2.f).withCentre({ (x.getRight() + y.getX()) * .5f, x.getCentreY() }), 1);
     }
 
     void resized() override
@@ -4587,59 +4619,100 @@ public:
         g.setColour(gold);
         g.drawEllipse(juce::Rectangle<float>(2 * radius, 2 * radius).withCentre(at), 1.6f);
 
-        // What each axis drives, beside the pad: the lines are gathered first so the block can sit in the middle of
-        // the free space, left-aligned within itself.
-        struct Line
+        // What each axis drives, beside the pad: one column per axis, each with its position as a badge, a number
+        // and a centred meter, then the routes it feeds as name and depth rows.
+        struct Route
         {
-            juce::String text;
-            juce::Colour colour;
-            float size;
-            int indent, height;
+            juce::String name;
+            float depth;
         };
-        std::vector<Line> lines;
-        for (const auto& [axis, prefix, colour, parameter] : { std::tuple { "X", "xy_x_", gold, padX },
-                                                                std::tuple { "Y", "xy_y_", mint, padY } })
+        struct Column
         {
-            if (!lines.empty())
-                lines.push_back({ {}, {}, 0.f, 0, 10 });
-            lines.push_back({ juce::String(axis) + "  " + juce::String(juce::roundToInt(parameter->getValue() * 200.f - 100.f)),
-                              colour, 14.f, 0, 19 });
-            auto any = false;
+            const char* axis;
+            juce::Colour colour;
+            float position;
+            std::vector<Route> routes;
+        };
+        std::array<Column, 2> columns;
+        int mostRoutes = 1;
+        for (size_t index = 0; index < columns.size(); ++index)
+        {
+            const auto prefix = juce::String(index == 0 ? "xy_x_" : "xy_y_");
+            auto* parameter = index == 0 ? padX : padY;
+            auto& column = columns[index];
+            column = { index == 0 ? "X" : "Y", index == 0 ? gold : mint, parameter->getValue() * 2.f - 1.f, {} };
             for (int slot = 1; slot <= 4; ++slot)
             {
                 const auto suffix = juce::String(slot);
-                auto* target = dynamic_cast<juce::AudioParameterChoice*>(state.getParameter(prefix + juce::String("target_") + suffix));
-                const auto* active = state.getRawParameterValue(prefix + juce::String("active_") + suffix);
-                const auto depth = state.getRawParameterValue(prefix + juce::String("depth_") + suffix)->load();
-                if (target == nullptr || target->getIndex() == 0 || active->load() < .5f || depth == 0)
-                    continue;
-                any = true;
-                lines.push_back({ target->getCurrentChoiceName() + "  " + (depth > 0 ? "+" : "")
-                                      + juce::String(juce::roundToInt(depth)) + "%",
-                                  cream.withAlpha(.7f), 12.5f, 12, 16 });
+                auto* target = dynamic_cast<juce::AudioParameterChoice*>(state.getParameter(prefix + "target_" + suffix));
+                const auto* active = state.getRawParameterValue(prefix + "active_" + suffix);
+                const auto depth = state.getRawParameterValue(prefix + "depth_" + suffix)->load();
+                if (target != nullptr && target->getIndex() != 0 && active->load() >= .5f && depth != 0)
+                    column.routes.push_back({ target->getCurrentChoiceName(), depth });
             }
-            if (!any)
-                lines.push_back({ "patch from the " + juce::String(axis) + " jack", cream.withAlpha(.4f), 12.5f, 12, 16 });
+            mostRoutes = juce::jmax(mostRoutes, static_cast<int>(column.routes.size()));
         }
-        const auto free = area.withTrimmedLeft(pad.getRight() - area.getX()).reduced(8, 10);
-        float blockWidth = 0, blockHeight = 0;
-        for (const auto& line : lines)
+
+        constexpr float headerHeight = 30.f, meterGap = 8.f, rowHeight = 18.f;
+        const auto free = area.withTrimmedLeft(pad.getRight() - area.getX()).reduced(16, 10);
+        const auto contentHeight = headerHeight + meterGap + 6.f + 10.f + rowHeight * static_cast<float>(mostRoutes);
+        const auto top = free.getY() + juce::jmax(0.f, (free.getHeight() - contentHeight) * .5f);
+        const auto gap = 22.f;
+        const auto columnWidth = (free.getWidth() - gap) * .5f;
+        g.setColour(mint.withAlpha(.12f));
+        g.fillRect(juce::Rectangle<float>(1.f, contentHeight).withCentre({ free.getCentreX(), top + contentHeight * .5f }));
+
+        for (size_t index = 0; index < columns.size(); ++index)
         {
-            if (line.size > 0)
-                blockWidth = juce::jmax(blockWidth, static_cast<float>(line.indent)
-                                                        + juce::GlyphArrangement::getStringWidth(readoutFont(line.size), line.text));
-            blockHeight += static_cast<float>(line.height);
-        }
-        blockWidth = juce::jmin(blockWidth + 2.f, free.getWidth());
-        auto text = juce::Rectangle<float>(blockWidth, juce::jmin(blockHeight, free.getHeight())).withCentre(free.getCentre());
-        for (const auto& line : lines)
-        {
-            const auto row = text.removeFromTop(static_cast<float>(line.height));
-            if (line.size <= 0)
+            const auto& column = columns[index];
+            auto box = juce::Rectangle<float>(free.getX() + static_cast<float>(index) * (columnWidth + gap), top,
+                                              columnWidth, contentHeight);
+            auto header = box.removeFromTop(headerHeight);
+            const auto badge = header.removeFromLeft(headerHeight - 4).withSizeKeepingCentre(24.f, 24.f);
+            g.setColour(column.colour.withAlpha(.16f));
+            g.fillRoundedRectangle(badge, 5);
+            g.setColour(column.colour.withAlpha(.7f));
+            g.drawRoundedRectangle(badge.reduced(.5f), 5, 1.2f);
+            g.setFont(readoutFont(14.f));
+            g.setColour(column.colour);
+            g.drawText(column.axis, badge, juce::Justification::centred);
+
+            const auto value = juce::roundToInt(column.position * 100.f);
+            g.setFont(readoutFont(19.f));
+            g.drawText((value > 0 ? "+" : "") + juce::String(value), header.withTrimmedLeft(8), juce::Justification::centredLeft);
+
+            // A meter from the centre to wherever the axis sits.
+            box.removeFromTop(meterGap);
+            const auto track = box.removeFromTop(6.f);
+            g.setColour(column.colour.withAlpha(.1f));
+            g.fillRoundedRectangle(track, 3);
+            const auto centreX = track.getCentreX();
+            const auto reach = column.position * track.getWidth() * .5f;
+            g.setColour(column.colour.withAlpha(.75f));
+            g.fillRect(juce::Rectangle<float>(juce::jmin(centreX, centreX + reach), track.getY(), std::abs(reach), track.getHeight()));
+            g.setColour(cream.withAlpha(.45f));
+            g.fillRect(juce::Rectangle<float>(1.f, track.getHeight() + 4.f).withCentre({ centreX, track.getCentreY() }));
+
+            box.removeFromTop(10.f);
+            if (column.routes.empty())
+            {
+                g.setFont(readoutFont(12.5f));
+                g.setColour(cream.withAlpha(.4f));
+                g.drawText("patch from the " + juce::String(column.axis) + " jack", box.removeFromTop(rowHeight),
+                           juce::Justification::centredLeft, true);
                 continue;
-            g.setFont(readoutFont(line.size));
-            g.setColour(line.colour);
-            g.drawText(line.text, row.withTrimmedLeft(static_cast<float>(line.indent)), juce::Justification::centredLeft);
+            }
+            for (const auto& route : column.routes)
+            {
+                auto row = box.removeFromTop(rowHeight);
+                const auto depth = (route.depth > 0 ? "+" : "") + juce::String(juce::roundToInt(route.depth)) + "%";
+                g.setFont(readoutFont(12.5f));
+                g.setColour(column.colour.withAlpha(.9f));
+                const auto depthArea = row.removeFromRight(juce::GlyphArrangement::getStringWidth(readoutFont(12.5f), depth) + 2.f);
+                g.drawText(depth, depthArea, juce::Justification::centredRight);
+                g.setColour(cream.withAlpha(.78f));
+                g.drawText(route.name, row.withTrimmedRight(6.f), juce::Justification::centredLeft, true);
+            }
         }
         retro::crtGlass(g, area, 6);
     }
@@ -4790,6 +4863,15 @@ public:
         g.setColour(juce::Colour(0xff4a5056));
         g.fillRoundedRectangle(juce::Rectangle<float>(60, 4).withCentre({ area.getCentreX(), area.getBottom() - 9 }), 2);
 
+        // X and Y are one pad: a shared outline in the pad's two colours holds their tabs together.
+        {
+            const auto group = tabArea(5).getUnion(tabArea(6)).toFloat().expanded(3.f, 3.f);
+            const juce::Colour gold(colours[5]), mint(colours[6]);
+            g.setGradientFill(juce::ColourGradient(gold.withAlpha(.12f), group.getX(), 0, mint.withAlpha(.12f), group.getRight(), 0, false));
+            g.fillRoundedRectangle(group, 8);
+            g.setGradientFill(juce::ColourGradient(gold.withAlpha(.6f), group.getX(), 0, mint.withAlpha(.6f), group.getRight(), 0, false));
+            g.drawRoundedRectangle(group.reduced(.5f), 8, 1.2f);
+        }
         // Tabs, each with its source's colour, and Hide on the right.
         for (int i = 0; i < pages; ++i)
         {
@@ -6225,6 +6307,7 @@ public:
 
     ~CartridgeSurface() override
     {
+        finishTweens();
         stopTimer();
         setLookAndFeel(nullptr);
     }
@@ -6471,15 +6554,17 @@ private:
     }
 
     // Generate clears the rack with a flourish: the cartridges in it play their way out, then the new variation's
-    // docks fall in empty while its cartridges lift off the shelf, gather in the middle of the deck and are dealt
-    // into their slots one after another. Without a window on screen the rack changes at once.
+    // docks fall in empty while its cartridges lift off the shelf one after another and drop straight into their slots. Without a window on screen the rack changes at once.
     void generateRack(uint32_t seed)
     {
         if (dealing)
             return;
+        finishTweens();
+        rememberRack(false);
         if (getPeer() == nullptr)
         {
-            model.generate(tag, seed);
+            model.generate(tag, seed, strength);
+            rememberRack(true);
             refresh();
             return;
         }
@@ -6506,7 +6591,8 @@ private:
 
     void deal(uint32_t seed)
     {
-        model.generate(tag, seed);
+        model.generate(tag, seed, strength);
+        rememberRack(true);
         // The old slots have all played out, so rebuild even if the variation keeps the same chain.
         order.fill(noCartridge);
         dealPending = true;
@@ -6527,11 +6613,7 @@ private:
         const auto now = juce::Time::getMillisecondCounterHiRes();
         const auto count = static_cast<int>(waiting.size());
         const auto window = viewport.getBounds().toFloat();
-        const auto centre = window.getCentre().translated(0, -18);
-        const auto cavityWidth = static_cast<float>(cavityOf(waiting.front()).getWidth());
-        const auto spread = juce::jmin(46.f, window.getWidth() * .5f / static_cast<float>(count));
-        constexpr double launchGap = 75, dealGap = 120, hold = 180;
-        const auto dealStart = now + launchGap * (count - 1) + FlyingCartridge::riseTime + hold;
+        constexpr double launchGap = 110;
         const auto shelfWindow = shelfView.getBounds().toFloat();
         flights.clear();
         landed = 0;
@@ -6548,13 +6630,9 @@ private:
             const auto fan = static_cast<float>(k) - static_cast<float>(count - 1) * .5f;
             FlyingCartridge::Flight flight;
             flight.from = from;
-            flight.gather = FlyingCartridge::Box(cavityWidth * .78f, cavityWidth * .78f / cartridgeAspect)
-                                .withCentre(centre.translated(fan * spread, fan * fan * 3.f));
             flight.to = cavityOf(index).toFloat();
-            flight.fanAngle = fan * .09f;
-            flight.bob = static_cast<float>(k) * 1.3f;
+            flight.turn = fan;
             flight.launch = now + launchGap * k;
-            flight.deal = dealStart + dealGap * k;
             flight.fade = !window.contains(flight.to);
             auto card = std::make_unique<FlyingCartridge>(art, static_cast<int>(type), flight,
                 [this, safe = juce::Component::SafePointer<CartridgeSlot>(slot)]
@@ -6741,6 +6819,7 @@ private:
                         { drag(event, static_cast<int>(type), index, true); };
                     slot->insert.onClick = [this, instance] { inspectCartridge(instance); };
                     slot->drawer->details.onClick = [this, instance] { inspectCartridge(instance); };
+                    slot->drawer->randomise.onClick = [this, instance] { randomiseCartridge(instance); };
                     slot->drawer->power.onClick = [this, index] { model.toggleCartridge(index); };
                     slot->drawer->onScrub = [this](bool engaged, float speed) { model.scrubTape(engaged, speed); };
                     if (juce::String(modules[type].prefix) == "stretch")
@@ -6853,6 +6932,8 @@ public:
     // Extra height the surface takes below the deck while the MOD drawer is out; the editor grows to show it.
     static constexpr int drawerSpace = ModDrawer::height + 6;
     std::function<void(int extra)> onExtraHeight;
+    // The Scale menu asks the window to resize itself to a multiple of the design size.
+    std::function<void(float scale)> onScale;
 
 private:
     // Grows or shrinks the surface below the deck to `extra` pixels and asks the editor to follow.
@@ -6968,6 +7049,7 @@ private:
         }
         menu.addSubMenu("4. MELTIT", factory, true, nullptr, factoryChosen);
         menu.addSeparator();
+        menu.addItem(998, "Save preset...");
         menu.addItem(999, "Import VST3 preset...");
         menu.setLookAndFeel(&look);
         menu.showMenuAsync(juce::PopupMenu::Options().withTargetComponent(preset),
@@ -6975,7 +7057,9 @@ private:
             {
                 if (safe == nullptr || id == 0)
                     return;
-                if (id == 999)
+                if (id == 998)
+                    safe->savePreset();
+                else if (id == 999)
                     safe->importPreset();
                 else if (id >= 1000)
                     safe->loadFile(files[id - 1000]);
@@ -6993,7 +7077,26 @@ private:
         menu.addItem(4, "Macro");
         for (size_t i = 0; i < tagNames.size(); ++i)
             tags.addItem(100 + static_cast<int>(i), tagNames[i], true, tag == static_cast<int>(i));
+        menu.addSeparator();
+        menu.addSectionHeader("Generate options");
         menu.addSubMenu("Generate style", tags);
+        juce::PopupMenu strengths;
+        static constexpr std::array strengthNames { "Subtle", "Normal", "Wild" };
+        for (int i = 0; i < 3; ++i)
+            strengths.addItem(200 + i, strengthNames[static_cast<size_t>(i)], true, strength == i);
+        menu.addSubMenu("Randomness", strengths);
+        const auto hasHistory = !history.empty();
+        menu.addItem(10, "Previous rack", hasHistory && cursor > 0 && !dealing);
+        menu.addItem(11, "Next rack", hasHistory && cursor + 1 < static_cast<int>(history.size()) && !dealing);
+        menu.addSeparator();
+        juce::PopupMenu scales;
+        const auto currentPercent = juce::roundToInt(model.editorScale() * 100.f);
+        for (int i = 0; i < 8; ++i)
+        {
+            const auto percent = 25 * (i + 1);
+            scales.addItem(300 + percent, juce::String(percent) + "%", true, percent == currentPercent);
+        }
+        menu.addSubMenu("Scale", scales);
         menu.addSeparator();
         menu.addItem(5, "Clear rack", !slots.empty());
         menu.setLookAndFeel(&look);
@@ -7009,9 +7112,160 @@ private:
                     case 3: safe->toggleDrawer(1); break;
                     case 4: safe->toggleDrawer(2); break;
                     case 5: safe->model.clearCartridges(); safe->refresh(); break;
-                    default: safe->tag = id - 100; break;
+                    case 10: safe->stepHistory(-1); break;
+                    case 11: safe->stepHistory(1); break;
+                    default:
+                        if (id >= 200 && id < 300)
+                            safe->strength = id - 200;
+                        else if (id >= 300)
+                        {
+                            if (safe->onScale)
+                                safe->onScale(static_cast<float>(id - 300) / 100.f);
+                        }
+                        else
+                            safe->tag = id - 100;
+                        break;
                 }
             });
+    }
+
+    // Asks for a name and writes the rack as a preset; new presets go to a User folder of the library.
+    void savePreset()
+    {
+        const auto folder = selectedFile.existsAsFile() ? selectedFile.getParentDirectory()
+                                                        : libraryDirectory().getChildFile("User");
+        folder.createDirectory();
+        const auto name = selectedFile.existsAsFile() ? selectedFile.getFileNameWithoutExtension() : juce::String("My Rack");
+        chooser = std::make_unique<juce::FileChooser>("Save a MELTIT preset", folder.getChildFile(name + ".vstpreset"),
+                                                      "*.vstpreset");
+        chooser->launchAsync(juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles
+                                 | juce::FileBrowserComponent::warnAboutOverwriting,
+            [safe = juce::Component::SafePointer<CartridgeSurface>(this)](const juce::FileChooser& dialog)
+            {
+                auto file = dialog.getResult();
+                if (safe == nullptr || file == juce::File{})
+                    return;
+                file = file.withFileExtension("vstpreset");
+                if (safe->model.savePresetFile(file))
+                {
+                    safe->selectedFile = file;
+                    safe->preset.setButtonText(file.getFileNameWithoutExtension());
+                    safe->notice.show("Preset saved", file.getFileNameWithoutExtension());
+                }
+                else
+                    safe->notice.show("Save failed", "Could not write this preset.");
+            });
+    }
+
+    // The dice key on a card: its knobs get a new setting, the way a randomly chosen preset sets the effect up. The
+    // power switch stays as it was.
+    void randomiseCartridge(int instance)
+    {
+        finishTweens();
+        const auto name = juce::String(modules[static_cast<size_t>(instance) % modules.size()].prefix);
+        const auto prefix = effectPrefix(instance);
+        // With a window on screen the knobs turn to their new places one after another; without one they jump.
+        const auto animate = getPeer() != nullptr;
+        double delay = 0;
+        for (const auto& entry : randomCartridgeValues(name.toStdString(),
+                                                        static_cast<uint32_t>(juce::Random::getSystemRandom().nextInt())))
+            if (auto* parameter = state.getParameter(prefix + juce::String(entry.id).fromFirstOccurrenceOf(name + "_", false, false)))
+            {
+                const auto to = parameter->convertTo0to1(entry.value);
+                parameter->beginChangeGesture();
+                if (!animate)
+                {
+                    parameter->setValueNotifyingHost(to);
+                    parameter->endChangeGesture();
+                    continue;
+                }
+                tweens.push_back({ parameter, parameter->getValue(), to, delay, parameter->isDiscrete() });
+                delay += 30;
+            }
+        tweenInstance = instance;
+        tweenStart = juce::Time::getMillisecondCounterHiRes();
+        refreshInstance(instance);
+    }
+
+    void refreshInstance(int instance)
+    {
+        for (auto& slot : slots)
+            if (slot->instance == instance)
+                slot->refresh();
+    }
+
+    // Brings every knob still turning to its final place and lets go of it.
+    void finishTweens()
+    {
+        for (auto& tween : tweens)
+        {
+            tween.parameter->setValueNotifyingHost(tween.to);
+            tween.parameter->endChangeGesture();
+        }
+        tweens.clear();
+    }
+
+    void tickTweens()
+    {
+        if (tweens.empty())
+            return;
+        const auto elapsed = juce::Time::getMillisecondCounterHiRes() - tweenStart;
+        auto running = false;
+        for (auto& tween : tweens)
+        {
+            const auto u = juce::jlimit(0.f, 1.f, static_cast<float>((elapsed - tween.delay) / tweenTime));
+            running = running || u < 1.f;
+            // Smooth start and stop; a selector or switch changes at the halfway point instead of flicking past values.
+            const auto value = tween.discrete ? (u >= .5f ? tween.to : tween.from)
+                                              : tween.from + (tween.to - tween.from) * (u * u * (3.f - 2.f * u));
+            if (value != tween.parameter->getValue())
+                tween.parameter->setValueNotifyingHost(value);
+        }
+        refreshInstance(tweenInstance);
+        if (!running)
+            finishTweens();
+    }
+
+    // Generate remembers the racks it made (and the one it replaced), so the options menu can step back and forward.
+    void rememberRack(bool afterGenerate)
+    {
+        juce::MemoryBlock now;
+        processor.getStateInformation(now);
+        if (!afterGenerate)
+        {
+            // Edits made since the last step are kept in the rack being left.
+            if (history.empty())
+            {
+                history.push_back(std::move(now));
+                cursor = 0;
+            }
+            else
+                history[static_cast<size_t>(cursor)] = std::move(now);
+            history.resize(static_cast<size_t>(cursor) + 1);
+            return;
+        }
+        history.push_back(std::move(now));
+        if (history.size() > 50)
+            history.erase(history.begin());
+        cursor = static_cast<int>(history.size()) - 1;
+    }
+
+    void stepHistory(int direction)
+    {
+        const auto target = cursor + direction;
+        if (dealing || target < 0 || target >= static_cast<int>(history.size()))
+            return;
+        finishTweens();
+        processor.getStateInformation(history[static_cast<size_t>(cursor)]);
+        cursor = target;
+        const auto& snapshot = history[static_cast<size_t>(cursor)];
+        const auto scale = model.editorScale();
+        inspector.reset();
+        processor.setStateInformation(snapshot.getData(), static_cast<int>(snapshot.getSize()));
+        model.setEditorScale(scale);
+        selectedFile = juce::File{};
+        preset.setButtonText({});
+        refresh();
     }
 
     void importPreset()
@@ -7092,6 +7346,19 @@ private:
     juce::Rectangle<float> addFrom, addTo;
     double addStarted = 0;
     juce::VBlankAttachment addFrames { this, [this] { tickAdd(); } };
+    // The knobs a card's dice is turning: where each starts and ends, as 0 to 1 parameter values.
+    struct Tween
+    {
+        juce::RangedAudioParameter* parameter;
+        float from, to;
+        double delay;
+        bool discrete;
+    };
+    static constexpr double tweenTime = 600;
+    std::vector<Tween> tweens;
+    double tweenStart = 0;
+    int tweenInstance = -1;
+    juce::VBlankAttachment tweenFrames { this, [this] { tickTweens(); } };
     SignalChain chain;
     PaintCache background;
     bool scrolling = false;
@@ -7111,8 +7378,10 @@ private:
     PresetIdentity displayed;
     juce::File selectedFile;
     std::unique_ptr<juce::FileChooser> chooser;
-    int target = -1, tag = 0, animatePosition = -1;
+    int target = -1, tag = 0, strength = 1, animatePosition = -1;
     bool dragging = false;
+    std::vector<juce::MemoryBlock> history;
+    int cursor = -1;
 };
 
 class CartridgeEditor final : public juce::AudioProcessorEditor
@@ -7126,9 +7395,13 @@ public:
         setResizable(true, true);
         // The window grows downwards while the MOD drawer is out, keeping the plugin's scale.
         surface.onExtraHeight = [this](int extra) { useDesignHeight(editorDesignHeight + extra); };
+        surface.onScale = [this](float scale)
+        {
+            setSize(juce::roundToInt(editorDesignWidth * scale), juce::roundToInt(static_cast<float>(designHeight) * scale));
+        };
         useDesignHeight(editorDesignHeight);
         // Reopen at the size the user left it at.
-        const auto scale = juce::jlimit(.8f, 1.5f, sizeModel.editorScale());
+        const auto scale = juce::jlimit(.25f, 2.f, sizeModel.editorScale());
         setSize(juce::roundToInt(editorDesignWidth * scale), juce::roundToInt(editorDesignHeight * scale));
         constructed = true;
     }
@@ -7165,7 +7438,7 @@ private:
         designHeight = height;
         // Free the proportions while the height changes, so the width stays where it is.
         getConstrainer()->setFixedAspectRatio(0.0);
-        setResizeLimits(editorDesignWidth * 4 / 5, height * 4 / 5, editorDesignWidth * 3 / 2, height * 3 / 2);
+        setResizeLimits(editorDesignWidth / 4, height / 4, editorDesignWidth * 2, height * 2);
         if (getWidth() > 0)
             setSize(getWidth(), juce::roundToInt(static_cast<float>(height) * scale));
         getConstrainer()->setFixedAspectRatio(static_cast<double>(editorDesignWidth) / height);

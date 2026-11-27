@@ -43,7 +43,10 @@ public:
     virtual std::array<float, 2> takeOutputPeaks() = 0;
     virtual void loadPreset(int index) = 0;
     virtual bool loadPresetFile(const juce::File& file) = 0;
-    virtual void generate(int tag, uint32_t seed) = 0;
+    // Saves the whole rack as a VST3 preset that loadPresetFile (and any host) can read back.
+    virtual bool savePresetFile(const juce::File& file) = 0;
+    // strength: 0 subtle, 1 normal, 2 wild.
+    virtual void generate(int tag, uint32_t seed, int strength) = 0;
     virtual PresetIdentity presetIdentity() const = 0;
     virtual CartridgeOrder cartridges() const = 0;
     virtual bool insertCartridge(int type, int position) = 0;
